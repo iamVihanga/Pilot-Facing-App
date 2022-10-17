@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .profession-select-btn {
+    @apply sm:h-full w-12 bg-primaryBlueLight text-primaryBlue text-sm font-light rounded-md;
+  }
+  .profession-select-btn.active {
+    @apply bg-primaryTealLight text-[#2dd1b6];
+  }
+  .form-input {
+    @apply bg-primaryBlueLight text-primaryBlue px-4 text-sm placeholder:text-primaryBlue rounded-md outline-none;
+  }
+  .form-input.success {
+    @apply bg-primaryTealLight text-[#32ad99];
+  }
+  .active-skill {
+    @apply bg-primaryTealLight text-primaryTeal;
+  }
+  .cofirm-card {
+    @apply w-full p-4 rounded-md min-h-[150px] flex flex-row gap-4 items-start bg-primaryBlueLight;
+  }
+  .sidenav-item {
+    @apply cursor-pointer w-full rounded-md py-3 bg-transparent flex flex-row items-center justify-start pl-8 gap-3 text-gray-400;
+  }
+  .sidenav-item.active {
+    @apply bg-primaryBlueLight text-skyBlue;
+  }
+  .sidenav-item-mobile {
+    @apply cursor-pointer flex flex-col items-center text-gray-400;
+  }
+  .sidenav-item-mobile.active {
+    @apply text-skyBlue;
+  }
+  .job-card {
+    @apply bg-white w-full rounded-md sm:pl-8 pl-3 pr-5 py-4 flex flex-row sm:gap-6 gap-4 items-center justify-between cursor-pointer shadow-card;
+  }
+  .job-card.active {
+    @apply border border-2 border-teal-200;
+  }
+  .badge {
+    @apply p-2 text-sm bg-red-400 rounded-md text-white;
+  }
+  .dropzone {
+    @apply w-full flex flex-col items-center justify-center py-16 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300;
+  }
+  .dropzone.focused {
+    @apply border-2 border-blue-300;
+  }
+  .dropzone.accept {
+    @apply border-2 border-green-500;
+  }
+}
+
+@layer utilities {
+  .scrollbar-medium::-webkit-scrollbar {
+    width: 5px;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Toggle B */
+input:checked ~ .dot {
+  transform: translateX(150%);
+  background-color: #fff;
+}
+
+input:checked ~ .block {
+  background-color: #007aff;
+  transition: 0.4s ease-in-out;
+}
