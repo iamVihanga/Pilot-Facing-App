@@ -1,21 +1,69 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import React from 'react'
-import { HomeIcon, LifebuoyIcon, BookmarkIcon, UserIcon } from '@heroicons/react/24/outline'
+import React, { useEffect, useState } from 'react'
+import { HomeIcon, LifebuoyIcon, BookmarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { useRouter } from "next/router";
 import { JobDetails_Sidebar } from "../";
+import { useUser, useSessionContext } from '@supabase/auth-helpers-react'
+import { getUserByEmail } from "../../config/supabaseFunctions";
 
 const DashboardLayout = ({ children, className, headerComponent }) => {
   const router = useRouter()
   const activeNav = router.pathname.slice(1)
   const accountPage = router.pathname === '/account'
+  const { supabaseClient } = useSessionContext()
+  const [loading, setLoading] = useState(true)
+  const user = useUser()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+
+  // ----------- screen width -------------
+  let screenWidth
+  if (typeof window !== "undefined") {
+    // Client-side-only code
+    screenWidth = window.screen.width
+  }
+  // ----------------------------------------
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      setLoading(true)
+      try {
+        const { data, error } = await getUserByEmail(user.email)
+
+        if (error) throw error
+
+        if (data) {
+          setFirstName(data[0].firstName)
+          setLastName(data[0].lastName)
+          setLoading(false)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    // Avoit data fetching when md, sm screens
+    if (screenWidth > 1023) {
+
+      getUserInfo()
+    }
+  }, [])
+
+
+  const handlelogout = async () => {
+    const { error } = await supabaseClient.auth.signOut()
+    if (!error) router.reload('/')
+  }
 
   return (
     <div className={`${className} w-full min-h-screen flex flex-row gap-2 bg-[#F7F9FA]`}>
       {/* Navigation Bar */}
       <div className="fixed lg:flex hidden min-h-screen  overflow-y-hidden bg-white w-[250px] px-7 py-5 flex-col justify-between">
         <div className="">
-          <img src={'/assets/logo.jpg'} alt='logo' className='w-[100%] mb-5' />
+          <Link href={"/"}>
+            <img src={'/assets/logo.jpg'} alt='logo' className='w-[100%] mb-5 cursor-pointer' />
+          </Link>
           <div className="flex flex-col gap-3">
             <Link href='/'>
               <a className={`sidenav-item ${activeNav == '' && 'active'}`}>
@@ -38,18 +86,34 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
               <p className="text-base font-semibold">Support</p>
             </a>
           </Link>
+
+
+          <div className={`sidenav-item mt-3`} onClick={handlelogout}>
+            <ArrowRightOnRectangleIcon className='w-6 h-6' strokeWidth={2} />
+            <p className="text-base font-semibold">Log out</p>
+          </div>
         </div>
 
-        <Link href="/account">
-          <div className={`cursor-pointer px-2 py-2 ${accountPage ? 'bg-primaryBlueLight' : 'bg-slate-300'} rounded-md flex flex-row items-center gap-2`} >
-            <Image src="/assets/avatar.jpg" alt="avatar" width={40} height={40} className='rounded-md' />
+        <div>
+          <Link href="/account">
+            <div className={`cursor-pointer px-2 py-2 ${accountPage ? 'bg-primaryBlueLight' : 'bg-slate-300'} rounded-md flex flex-row items-center gap-2`} >
+              <Image src="/assets/avatar.jpg" alt="avatar" width={40} height={40} className='rounded-md' />
 
-            <div>
-              <p className={`font-semibold text-sm ${accountPage ? 'text-primaryBlue' : 'text-black'}`}>Jaime Harris</p>
-              <p className={`font-normal text-xs ${accountPage ? 'text-primaryBlue' : 'text-gray-500'}`}>Drone Pilot</p>
+              {loading ?
+                <div>
+                  <div className={`min-w-[115px] min-h-[15px] rounded-full font-semibold text-sm bg-gray-400 opacity-70`}></div>
+                  <div className={`min-w-[115px] min-h-[10px] mt-1 rounded-full font-normal text-xs bg-gray-400 opacity-70`}></div>
+                </div>
+                :
+                <div>
+                  <p className={`font-semibold text-sm ${accountPage ? 'text-primaryBlue' : 'text-black'}`}>{firstName} {lastName}</p>
+                  <p className={`font-normal text-xs ${accountPage ? 'text-primaryBlue' : 'text-gray-500'}`}>Drone Pilot</p>
+                </div>
+              }
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
+
       </div>
 
 

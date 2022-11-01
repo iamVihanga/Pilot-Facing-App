@@ -5,14 +5,21 @@
 @tailwind utilities;
 
 @layer components {
-  .profession-select-btn {
+  .title-select-btn {
     @apply sm:h-full w-12 bg-primaryBlueLight text-primaryBlue text-sm font-light rounded-md;
   }
-  .profession-select-btn.active {
+  .title-select-btn.active {
     @apply bg-primaryTealLight text-[#2dd1b6];
   }
+  .normal-input {
+    @apply w-full border border-transparent bg-primaryBlueLight sm:text-[16px] text-base text-primaryBlue h-12 rounded-md px-4 outline-none placeholder:text-primaryBlue;
+  }
+  .title-button {
+    @apply w-12 h-12 rounded-md sm:text-sm text-base;
+  }
+
   .form-input {
-    @apply bg-primaryBlueLight text-primaryBlue px-4 text-sm placeholder:text-primaryBlue rounded-md outline-none;
+    @apply bg-primaryBlueLight text-primaryBlue px-4 text-[16px] placeholder:text-primaryBlue rounded-md outline-none;
   }
   .form-input.success {
     @apply bg-primaryTealLight text-[#32ad99];
@@ -52,6 +59,9 @@
   }
   .dropzone.accept {
     @apply border-2 border-green-500;
+  }
+  .dropdown-menu-item {
+    @apply p-1 px-2 mb-2 cursor-pointer hover:bg-gray-200 rounded-md transition-all ease-in-out duration-100;
   }
 }
 

@@ -1,14 +1,53 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import Link from 'next/link'
 import { useRouter } from "next/router";
+import { signinUser, getSession } from '../../config/supabaseFunctions'
 
 const Login = () => {
+    const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+
+    // Redirect if auth
+    useEffect(() => {
+        const getSessionAvailable = async () => {
+            try {
+                const { data } = await getSession()
+                // console.log(data.session)
+                if (data.session) router.push('/')
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        getSessionAvailable()
+    }, [])
+
 
     const handleSubmit = () => {
-        console.log(email, password)
+        const handleSignIn = async () => {
+            try {
+                setLoading(true)
+                let { data, error } = await signinUser({
+                    email,
+                    password
+                })
+
+                if (error) throw error
+
+                setLoading(false)
+
+                if (data) router.push('/')
+            } catch (err) {
+                setError(err.message)
+                setLoading(false)
+            }
+        }
+
+        handleSignIn()
     }
 
     return (
@@ -17,12 +56,14 @@ const Login = () => {
                 <img className='w-full h-full object-cover' src="/assets/loginBG.jpg" />
             </div>
 
-            <div className='flex items-center justify-center px-12'>
-                <form>
+            <div className='flex items-center justify-center sm:px-12 px-8'>
+
+                <form className='w-full'>
                     {/* <h2 className='text-logoText font-light'><span className="font-bold">Onthefly</span> DronePilots</h2> */}
-                    <img src="/assets/logo.jpg" className='w-[60%] h-[60%]' />
+                    <img src="/assets/Duber logo.svg" className='w-32' />
                     <h2 className="mt-12 mb-5 text-xl text-black font-bold">Nice to see you again</h2>
 
+                    {error && <p className="mb-5 text-xs text-red-500">{error}</p>}
                     <InputItem
                         label={"Login"}
                         inputType="email"
@@ -44,16 +85,20 @@ const Login = () => {
                     <div className="w-full flex items-center flex-nowrap justify-between mt-6 mb-8">
                         <ToggleButton />
 
-                        <Link href='#'>
+                        <Link href='/'>
                             <a className="text-skyBlue text-xs font-semibold">Forgot Password ?</a>
                         </Link>
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className='w-full bg-skyBlue py-3 rounded-md text-white font-semibold text-sm'
+                        type="button"
+                        className='w-full flex items-center justify-center bg-skyBlue py-3 rounded-md text-white font-semibold text-sm'
                     >
-                        Sign in
+                        {!loading ? 'Sign in' : <svg className="h-5 w-5 animate-spin text-white text-center" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>}
                     </button>
 
                     <div className='border-t border-gray-200 my-9' />

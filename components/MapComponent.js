@@ -64,7 +64,7 @@ const MapComponent = () => {
                     source="maine"
                     paint={{
                         'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
+                        'fill-opacity': 0.4
                     }}
                 />
                 <Layer
@@ -72,8 +72,8 @@ const MapComponent = () => {
                     type="line"
                     source="maine"
                     paint={{
-                        'line-color': '#000',
-                        'line-width': 3
+                        'line-color': 'blue',
+                        'line-width': 2
                     }}
                 />
                 <h2 className='absolute bg-white p-4 rounded-md bottom-10 left-8 shadow-xl font-bold text-lg'>{geojsonArea.geometry(geoJsonData.geometry)} m<sup>2</sup> </h2>

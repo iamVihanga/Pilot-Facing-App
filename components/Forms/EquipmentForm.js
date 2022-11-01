@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { completeForm, submitEquipmentForm } from "../../redux/registerSlice";
 import { useForm } from "react-hook-form";
-import { skills, droneEquipments } from "../../utils/registerationData";
+import { skills } from "../../utils/registerationData";
 import { useRouter } from "next/router";
+import { getDrones } from "../../config/supabaseFunctions";
+import { Button, ErrorMessage } from "../";
 
 const EquipmentsForm = () => {
     const dispatch = useDispatch()
     const state = useSelector(state => state.register)
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [droneEquipments, setDroneEquipments] = useState([])
+    const [dronesLoading, setDronesLoading] = useState(true)
 
     const router = useRouter()
     const { register, handleSubmit } = useForm({
@@ -16,7 +22,49 @@ const EquipmentsForm = () => {
     const [activeSkills, setActiveSkills] = useState(state.skills)
     const [activeEquipments, setActiveEquipments] = useState(state.equipments)
 
-    const onSubmit = (data) => {
+    // Load drones data when component mount
+    useEffect(() => {
+        setDronesLoading(true)
+        try {
+            const getDronesData = async () => {
+                let { data, error } = await getDrones()
+
+                if (!error) {
+                    setDroneEquipments(data)
+                    setDronesLoading(false)
+                } else throw error
+            }
+
+            getDronesData()
+        } catch (err) {
+            console.log(err)
+        }
+    }, [])
+
+
+    // ------------------------------------------------
+    const validateForm = (skills, equipments) => {
+        let validateError = false
+
+        if (skills.length === 0) {
+            setError('Please select at least 1 skill')
+            validateError = true
+        }
+
+        if (equipments.length === 0) {
+            setError('Please select at least 1 equipment')
+            validateError = true
+        }
+
+        if (!validateError) setError(null)
+
+        return validateError
+    }
+
+    // ------------------------------------------------
+    // Handle Form Submit function below
+    // ------------------------------------------------
+    const onSubmit = async (data) => {
         const skillSet = []
         activeSkills.map(skill => {
             skillSet.push({ id: skill.id, text: skill.text })
@@ -24,19 +72,37 @@ const EquipmentsForm = () => {
 
         const equipmentSet = []
         activeEquipments.map(equip => {
-            equipmentSet.push({ id: equip.id, text: equip.text })
+            equipmentSet.push({ id: equip.id, brand: { name: equip.brand.name }, model: equip.model })
         })
 
-        dispatch(submitEquipmentForm({
-            skills: skillSet,
-            equipments: equipmentSet
-        }))
-        dispatch(completeForm(3))
-        router.push('/auth/register/confirm')
+        // --------------------------------
+        // Update Database
+        // --------------------------------
+        try {
+            // Validate
+            const isError = validateForm(skillSet, equipmentSet)
+            if (isError) return
+
+            setLoading(true)
+
+            dispatch(submitEquipmentForm({
+                skills: skillSet,
+                equipments: equipmentSet
+            }))
+            dispatch(completeForm(3))
+            setLoading(false)
+
+            router.push('/auth/register/confirm')
+        } catch (err) {
+            setLoading(false)
+            setError("Something went wrong !, Please try again")
+        }
     }
+    // ------------------------------------------------
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="pt-4">
+            {error && <ErrorMessage className={'mt-6'} error={error} setError={setError} />}
             <div className="mt-6">
                 <p className="mb-5">Skill / Experience</p>
                 <div className="max-w-fit flex flex-wrap gap-x-8 gap-y-5">
@@ -44,8 +110,18 @@ const EquipmentsForm = () => {
                 </div>
 
                 <p className="mt-9 mb-5">Drone Equipment</p>
-                <div className="max-w-fit w-full bg-primaryBlueLight rounded-md p-3 flex flex-wrap gap-x-2 gap-y-3">
-                    {droneEquipments.map(item => (
+
+                {/*  loading component */}
+                {dronesLoading && <div className="w-full py-12 flex items-center justify-center">
+                    <svg className="h-8 w-8 animate-spin text-skyBlue text-center" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>}
+
+                <div className="max-w-fit w-full bg-primaryBlueLight rounded-md p-3 py-6 flex flex-wrap gap-x-2 gap-y-3">
+                    {/* Drones data  */}
+                    {droneEquipments.length !== 0 && droneEquipments.map(item => (
                         <EquipmentBadge key={item.id} item={item} setActiveEquipments={setActiveEquipments} activeEquipments={activeEquipments} />
                     ))}
                 </div>
@@ -53,7 +129,7 @@ const EquipmentsForm = () => {
             </div>
 
 
-            <button className="mt-12 bg-primaryTeal px-10 py-2 uppercase text-color font-semibold text-white text-lg rounded-md">Next</button>
+            <Button className={'mt-12'} isLoading={loading}>NEXT</Button>
         </form>
     )
 }
@@ -111,7 +187,7 @@ const EquipmentBadge = ({ item, setActiveEquipments, activeEquipments }) => {
                 }}
                 className={`text-sm  px-3 py-2 text-white rounded-md cursor-pointer  transition-all ease-in-out duration-100 ${active ? 'bg-primaryTeal' : 'bg-primaryBlue hover:bg-skyBlue'}`}
             >
-                {item.text}
+                {item.brand.name}, {item.model}
             </p>
         </div>
     )

@@ -109,7 +109,7 @@ const SinglePage = () => {
 
                     {/* File Upload */}
                     <div className="mt-5 sm:mx-12 mx-3">
-                        <section className="">
+                        <section className="cursor-pointer">
                             <div {...getRootProps({ className: `dropzone ${isFocused && 'focused'} ${isDragAccept && 'accept'}` })}>
                                 <input {...getInputProps()} />
                                 <img src="/assets/folder.png" alt="" className='sm:w-20 w-14 mb-3' />

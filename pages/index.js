@@ -1,46 +1,48 @@
-import { DashboardLayout, JobListLayout, Mobile_AvailableJob } from "../components";
+import { DashboardLayout, JobListLayout, Mobile_AvailableJob, FullScreenLoading } from "../components";
 import { availableJobs } from "../utils/availableJobs_dummy";
 import { useSelector } from 'react-redux'
+import { useUser, useSessionContext } from '@supabase/auth-helpers-react'
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import extractHash from "../utils/extractHash";
 
 export default function Home() {
-  const activeJob = useSelector(state => state.activeJob.activeJob)
+  // ----------- screen width -------------
   let screenWidth
-
   if (typeof window !== "undefined") {
     // Client-side-only code
     screenWidth = window.screen.width
   }
+  // ----------------------------------------
+
+  const router = useRouter()
+  const activeJob = useSelector(state => state.activeJob.activeJob)
+  const { isLoading } = useSessionContext()
+  const user = useUser()
+
+  useEffect(() => {
+    // console.log(user)
+    if (!isLoading && user === null) router.push('/auth/login')
+  }, [isLoading])
 
   return (
     <>
-      {(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && <Mobile_AvailableJob />}
-      <DashboardLayout
-        className={(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && 'hidden'}
-        headerComponent={
-          <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white">
-            <img src={'/assets/logo.jpg'} alt='logo' className='w-[50%] mt-4 mb-3' />
-          </div>
-        }
-      >
+      {(isLoading || !user) ? <FullScreenLoading /> :
+        <>
+          {(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && <Mobile_AvailableJob />}
+          <DashboardLayout
+            className={(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && 'hidden'}
+            headerComponent={
+              <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white">
+                <img src={'/assets/logo.jpg'} alt='logo' className='w-[50%] mt-4 mb-3' />
+              </div>
+            }
+          >
 
-        <JobListLayout data={availableJobs} />
-      </DashboardLayout>
+            <JobListLayout data={availableJobs} />
+          </DashboardLayout>
+        </>
+      }
     </>
   )
-}
-
-export const getServerSideProps = async (context) => {
-  const token = true
-  if (context.res && !token) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/auth/login'
-      }
-    }
-  }
-
-  return {
-    props: { token }
-  }
 }

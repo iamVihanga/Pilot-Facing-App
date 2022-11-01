@@ -7,7 +7,7 @@ const initialState = {
     form3_state: '',
 
     // Contact form
-    profession: '',
+    title: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -17,12 +17,16 @@ const initialState = {
     // Certificate form
     flyerID: '',
     operatorID: '',
-    proofDoc: '',
-    droneInsurance: '',
+    proofDoc: null,
+    confirmNoProof: false,
+    droneInsurance: null,
 
     // Equipment form
     skills: [],
-    equipments: []
+    equipments: [],
+
+    // Mode
+    updateMode: false
 }
 
 const registerSlice = createSlice({
@@ -37,7 +41,7 @@ const registerSlice = createSlice({
 
         // Submit forms
         submitContactForm: (state, action) => {
-            state.profession = action.payload.profession
+            state.title = action.payload.title
             state.firstName = action.payload.firstName
             state.lastName = action.payload.lastName
             state.email = action.payload.email
@@ -50,11 +54,16 @@ const registerSlice = createSlice({
             state.operatorID = action.payload.operatorID
             state.proofDoc = action.payload.proofDoc
             state.droneInsurance = action.payload.droneInsurance
+            state.confirmNoProof = action.payload.confirmNoProof
         },
 
         submitEquipmentForm: (state, action) => {
             state.skills = action.payload.skills
             state.equipments = action.payload.equipments
+        },
+
+        setUpdateMode: (state, action) => {
+            state.updateMode = action.payload
         }
 
     }
@@ -66,7 +75,8 @@ export const {
     setActiveForm,
     submitContactForm,
     submitCertificateForm,
-    submitEquipmentForm
+    submitEquipmentForm,
+    setUpdateMode
 } = registerSlice.actions
 
 export default registerSlice.reducer

@@ -1,26 +1,35 @@
-import React from 'react'
-import { RegisterFormArea, RegisterFormNav } from '../../../components';
+import React, { useEffect } from 'react'
+import { RegisterFormNav, AuthLayout, ContactForm, CertificatesForm, EquipmentsForm } from '../../../components';
+import { getSession } from "../../../config/supabaseFunctions";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 const Register = () => {
-    return (
-        <div className='w-screen h-screen'>
-            {/* Logo */}
-            <div className="sm:w-[800px] mx-auto sm:px-2 px-5 py-5">
-                <img src="/assets/logo.jpg" className='sm:w-[30%] sm:h-[30%] w-[65%] w-[65%]' alt="" />
-            </div>
+    const router = useRouter()
 
-            {/* Form */}
-            <div className="flex flex-col mt-16 pb-16 justify-center">
-                <div className="sm:min-w-[700px] sm:mx-auto mx-4">
-                    {/* Form Nav */}
+    return (
+        <div className='relative'>
+            <AuthLayout>
+                <div className="">
                     <RegisterFormNav />
 
-                    {/* Form Area */}
-                    <RegisterFormArea />
+                    <ActiveStep />
                 </div>
-            </div>
+            </AuthLayout>
         </div>
     )
 }
 
 export default Register
+
+const ActiveStep = () => {
+    const state = useSelector(state => state.register)
+
+    switch (state.active_form) {
+        case 1: return <ContactForm />
+        case 2: return <CertificatesForm />
+        case 3: return <EquipmentsForm />
+
+        default: ''
+    }
+}
