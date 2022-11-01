@@ -26,7 +26,10 @@ const initialState = {
     equipments: [],
 
     // Mode
-    updateMode: false
+    updateMode: false,
+    form1_updateMode: false,
+    form2_updateMode: false,
+    form3_updateMode: false
 }
 
 const registerSlice = createSlice({
@@ -64,7 +67,15 @@ const registerSlice = createSlice({
 
         setUpdateMode: (state, action) => {
             state.updateMode = action.payload
-        }
+        },
+
+        switchUpdateMode: (state, action) => {
+            state[`form${action.payload}_updateMode`] = true
+        },
+
+        switchForm: (state, action) => {
+            state.active_form = action.payload
+        },
 
     }
 })
@@ -76,7 +87,9 @@ export const {
     submitContactForm,
     submitCertificateForm,
     submitEquipmentForm,
-    setUpdateMode
+    setUpdateMode,
+    switchUpdateMode,
+    switchForm
 } = registerSlice.actions
 
 export default registerSlice.reducer

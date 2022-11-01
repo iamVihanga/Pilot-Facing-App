@@ -1,12 +1,19 @@
 import React, { useState, useRef } from 'react'
 import { Input, CheckboxTeal, Button, ErrorMessage } from "../";
 import { useSelector, useDispatch } from "react-redux";
-import { submitCertificateForm, completeForm, setActiveForm } from "../../redux/registerSlice";
 import { uploadProofFile } from "../../config/supabaseFunctions";
+import {
+    submitCertificateForm,
+    completeForm,
+    setActiveForm,
+    switchUpdateMode
+} from "../../redux/registerSlice";
+import { useRouter } from "next/router";
 
 const CertificatesForm = () => {
     const state = useSelector(state => state.register)
     const dispatch = useDispatch()
+    const router = useRouter()
 
     const [flyerID, setFlyerID] = useState(state.flyerID)
     const [operatorID, setOperatorID] = useState(state.operatorID)
@@ -101,8 +108,13 @@ const CertificatesForm = () => {
                 confirmNoProof: confirm
             }))
             dispatch(completeForm(2))
+
+            if (state.form1_updateMode && state.form2_updateMode && state.form3_updateMode) return router.push('/auth/register/confirm')
+
+
             dispatch(setActiveForm(3))
 
+            dispatch(switchUpdateMode(2))
             setLoading(false)
         } catch (err) {
             setError(err.message)
@@ -174,7 +186,7 @@ const CertificatesForm = () => {
                 className='mt-9'
                 isLoading={loading}
             >
-                Next
+                {state.form2_updateMode ? 'Save' : 'Next'}
             </Button>
         </div >
     )

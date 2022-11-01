@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { completeForm, submitEquipmentForm } from "../../redux/registerSlice";
 import { useForm } from "react-hook-form";
 import { skills } from "../../utils/registerationData";
 import { useRouter } from "next/router";
 import { getDrones } from "../../config/supabaseFunctions";
 import { Button, ErrorMessage } from "../";
+import {
+    completeForm,
+    submitEquipmentForm,
+    switchUpdateMode
+} from "../../redux/registerSlice";
 
 const EquipmentsForm = () => {
     const dispatch = useDispatch()
     const state = useSelector(state => state.register)
+    const router = useRouter()
+
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const [droneEquipments, setDroneEquipments] = useState([])
     const [dronesLoading, setDronesLoading] = useState(true)
 
-    const router = useRouter()
     const { register, handleSubmit } = useForm({
         defaultValues: {}
     })
@@ -90,8 +95,12 @@ const EquipmentsForm = () => {
                 equipments: equipmentSet
             }))
             dispatch(completeForm(3))
-            setLoading(false)
 
+            if (state.form1_updateMode && state.form2_updateMode && state.form3_updateMode) return router.push('/auth/register/confirm')
+
+
+            dispatch(switchUpdateMode(3))
+            setLoading(false)
             router.push('/auth/register/confirm')
         } catch (err) {
             setLoading(false)

@@ -16,6 +16,8 @@ const Confirm = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
+    console.log(state)
+
     // redirect if auth
     // useEffect(() => {
     //     const getSessionAvailable = async () => {
@@ -81,7 +83,7 @@ const Confirm = () => {
                 {error && <ErrorMessage error={error} setError={setError} />}
                 {/* Contact form Confirmation */}
                 <div className="cofirm-card ">
-                    <div className="flex flex-1 flex-row gap-16">
+                    <div className="flex flex-1 flex-row">
                         <div>
                             <p className="text-primaryBlue sm:text-base text-sm font-medium">Name</p>
                             <p className="text-primaryBlue text-xs mt-1">{state.firstName} {state.lastName}</p>
@@ -89,7 +91,7 @@ const Confirm = () => {
                             <p className="text-primaryBlue sm:text-base text-sm font-medium mt-3">Email Address</p>
                             <p className="text-primaryBlue text-xs mt-1">{state.email}</p>
                         </div>
-                        <div>
+                        <div className='ml-6'>
                             <p className="text-primaryBlue sm:text-base text-sm font-medium">Telephone Number</p>
                             <p className="text-primaryBlue text-xs mt-1">{state.telNumber}</p>
 

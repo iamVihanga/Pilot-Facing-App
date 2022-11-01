@@ -2,11 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, ErrorMessage } from '../../components'
 import { useForm } from "react-hook-form";
-import { setActiveForm, completeForm, submitContactForm } from "../../redux/registerSlice";
+import {
+    setActiveForm,
+    completeForm,
+    submitContactForm,
+    switchUpdateMode
+} from "../../redux/registerSlice";
+import { useRouter } from 'next/router'
 
 const ContactForm = () => {
     const dispatch = useDispatch()
     const state = useSelector(state => state.register)
+    const router = useRouter()
 
     const [title, setTitle] = useState(state.title)
     const [firstName, setFirstName] = useState(state.firstName)
@@ -108,8 +115,11 @@ const ContactForm = () => {
                 company
             }))
             dispatch(completeForm(1))
-            dispatch(setActiveForm(2))
 
+            if (state.form1_updateMode && state.form2_updateMode && state.form3_updateMode) return router.push('/auth/register/confirm')
+
+            dispatch(setActiveForm(2))
+            dispatch(switchUpdateMode(1))
         } catch (err) {
             // console.log(err)
             setLoading(false)
@@ -221,7 +231,7 @@ const ContactForm = () => {
                 className='mt-9'
                 isLoading={loading}
             >
-                Next
+                {state.form1_updateMode ? 'Save' : 'Next'}
             </Button>
         </div>
     )
