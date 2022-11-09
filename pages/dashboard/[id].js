@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { DashboardLayout, MapComponent, Mobile_SidebarHeader } from '../components'
+import { DashboardLayout, MapComponent, Mobile_SidebarHeader } from '../../components'
 import { useRouter } from 'next/router'
 import { myJobs_dummy } from '../../utils/myJobs_dummy'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'

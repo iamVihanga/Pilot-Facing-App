@@ -1,11 +1,11 @@
 import React from 'react'
-import { DashboardLayout, Mobile_SidebarHeader } from '../components'
+import { DashboardLayout, Mobile_SidebarHeader } from '../../components'
 import { useRouter } from "next/router";
 
 // Sections
-import AccountSettings from '../components/AccountPage_Sections/AccountSettings'
-import ProfileSettings from '../components/AccountPage_Sections/ProfileSettings'
-import BillingSection from '../components/AccountPage_Sections/BillingSection'
+import AccountSettings from '../../components/AccountPage_Sections/AccountSettings'
+import ProfileSettings from '../../components/AccountPage_Sections/ProfileSettings'
+import BillingSection from '../../components/AccountPage_Sections/BillingSection'
 
 const Account = () => {
     const router = useRouter()
