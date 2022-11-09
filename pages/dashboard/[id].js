@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { DashboardLayout, MapComponent, Mobile_SidebarHeader } from '../components'
 import { useRouter } from 'next/router'
-import { myJobs_dummy } from '../utils/myJobs_dummy'
+import { myJobs_dummy } from '../../utils/myJobs_dummy'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import formatAMPM from '../utils/formatTime'
-import formatBytes from '../utils/formatBytes'
+import formatAMPM from '../../utils/formatTime'
+import formatBytes from '../../utils/formatBytes'
 import { useDropzone } from 'react-dropzone';
 import { useDispatch } from "react-redux";
-import { setActiveJob } from "../redux/activeJobSlice";
+import { setActiveJob } from "../../redux/activeJobSlice";
 
 const SinglePage = () => {
     const { acceptedFiles, getRootProps, getInputProps, isFocused, isDragAccept } = useDropzone();
