@@ -11,7 +11,7 @@ const MyJobs = () => {
                 </div>
             }
         >
-            <JobListLayout data={myJobs_dummy} />
+            {/* <JobListLayout data={myJobs_dummy} /> */}
         </DashboardLayout>
     )
 }
