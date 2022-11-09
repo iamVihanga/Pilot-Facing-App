@@ -7,8 +7,8 @@ import DropdownSelector from './DropdownSelector';
 
 const JobListLayout = ({ data }) => {
     const router = useRouter()
-    const isHome = router.pathname === '/'
-    const isMyJobs = router.pathname === '/myJobs'
+    const isHome = router.pathname === '/dashboard'
+    const isMyJobs = router.pathname === '/dashboard/myJobs'
     let dataSet = data
 
     // Filtering for My Jobs section

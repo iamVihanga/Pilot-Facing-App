@@ -1,6 +1,6 @@
 import React from 'react'
-import { DashboardLayout, JobListLayout } from '../components'
-import { myJobs_dummy } from "../utils/myJobs_dummy";
+import { DashboardLayout, JobListLayout } from '../../components'
+import { myJobs_dummy } from "../../utils/myJobs_dummy";
 
 const MyJobs = () => {
     return (
