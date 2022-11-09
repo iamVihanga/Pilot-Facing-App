@@ -16,7 +16,6 @@
     "@supabase/auth-helpers-nextjs": "^0.4.0",
     "@supabase/auth-helpers-react": "^0.3.0",
     "@supabase/supabase-js": "^2.0.0",
-    "@urbica/react-map-gl": "^1.16.2",
     "axios": "^0.27.2",
     "generate-password": "^1.7.0",
     "mapbox-gl": "^2.10.0",
