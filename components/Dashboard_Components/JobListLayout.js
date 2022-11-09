@@ -31,7 +31,7 @@ const JobListLayout = ({ data }) => {
     return (
         <div className='w-full  flex flex-row h-full'>
             {/* Job List Area */}
-            <div className="flex-1 mx-4 py-8">
+            <div className="flex-1 mx-4 py-7">
                 {/* Head */}
                 <div className=" flex flex-row w-full justify-between items-center">
                     <div className="flex flex-row gap-3 items-center">
@@ -68,7 +68,7 @@ const JobListLayout = ({ data }) => {
                 {/* Area */}
                 <div className="mt-4 bg-white rounded-lg w-full sm:p-5 p-3 flex flex-col gap-6">
                     {/* Card List */}
-                    {dataSet.map(item => <JobCard data={item} key={item.id} />)}
+                    {dataSet.length !== 0 && dataSet.map(item => <JobCard data={item} key={item.JobID} />)}
                 </div>
 
                 {isHome &&

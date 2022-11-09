@@ -62,9 +62,9 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
       <div className="fixed lg:flex hidden min-h-screen  overflow-y-hidden bg-white w-[250px] px-7 py-5 flex-col justify-between">
         <div className="">
           <Link href={"/"}>
-            <img src={'/assets/logo.jpg'} alt='logo' className='w-[100%] mb-5 cursor-pointer' />
+            <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mb-5 cursor-pointer' />
           </Link>
-          <div className="flex flex-col gap-3">
+          <div className="mt-8 flex flex-col gap-3">
             <Link href='/'>
               <a className={`sidenav-item ${activeNav == '' && 'active'}`}>
                 <HomeIcon className='w-6 h-6' strokeWidth={2} />

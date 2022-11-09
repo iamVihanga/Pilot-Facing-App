@@ -1,4 +1,5 @@
 import supabase from './supabaseClient'
+import customerClient from "./customerClient";
 
 export const insertToUsers = async (formData) => {
     let { data, error } = await supabase
@@ -87,4 +88,37 @@ export const getUserDetails = async (email) => {
         .eq('email', email)
 
     return { data, error }
+}
+
+export const getJobListing = async () => {
+    const res = await supabase
+        .from('Jobs')
+        .select()
+
+    return res
+}
+
+export const getSingleJob = async (jobID) => {
+    const res = await customerClient
+        .from('Orders')
+        .select(`
+            pilotExpertize,
+            id,
+            address,
+            date,
+            customerID (
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                companyName
+            ),
+            mapData,
+            area,
+            customerNote,
+            status
+        `)
+        .eq("id", jobID)
+
+    return res
 }

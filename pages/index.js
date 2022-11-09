@@ -5,8 +5,9 @@ import { useUser, useSessionContext } from '@supabase/auth-helpers-react'
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import extractHash from "../utils/extractHash";
+import { getJobListing } from "../config/supabaseFunctions";
 
-export default function Home() {
+export default function Home({ jobListing }) {
   // ----------- screen width -------------
   let screenWidth
   if (typeof window !== "undefined") {
@@ -22,27 +23,37 @@ export default function Home() {
 
   useEffect(() => {
     // console.log(user)
-    if (!isLoading && user === null) router.push('/auth/login')
+    // if (!isLoading && user === null) router.push('/auth/login')
   }, [isLoading])
 
   return (
     <>
-      {(isLoading || !user) ? <FullScreenLoading /> :
-        <>
-          {(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && <Mobile_AvailableJob />}
-          <DashboardLayout
-            className={(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && 'hidden'}
-            headerComponent={
-              <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white">
-                <img src={'/assets/logo.jpg'} alt='logo' className='w-[50%] mt-4 mb-3' />
-              </div>
-            }
-          >
+      {/* {(isLoading || !user) ? <FullScreenLoading /> : */}
+      <>
+        {(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && <Mobile_AvailableJob />}
+        <DashboardLayout
+          className={(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && 'hidden'}
+          headerComponent={
+            <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white shadow-md">
+              <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mt-4 mb-4' />
+            </div>
+          }
+        >
 
-            <JobListLayout data={availableJobs} />
-          </DashboardLayout>
-        </>
-      }
+          <JobListLayout data={jobListing} />
+        </DashboardLayout>
+      </>
+      {/* } */}
     </>
   )
+}
+
+export async function getServerSideProps() {
+  const { data, error } = await getJobListing()
+
+  return {
+    props: {
+      jobListing: data
+    }
+  }
 }

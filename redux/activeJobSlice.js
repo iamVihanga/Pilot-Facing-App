@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    activeJob: {}
+    activeJob: null
 }
 
 const activeJobSlice = createSlice({

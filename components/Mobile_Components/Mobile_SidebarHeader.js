@@ -8,7 +8,7 @@ const Mobile_SidebarHeader = ({ centerComponent, onBackPress }) => {
 
             {centerComponent}
 
-            <img src="/assets/logo2.jpg" className='w-9 h-9' />
+            <img src="/assets/Duber Icon.svg" className='w-9 h-9' />
         </div>
     )
 }

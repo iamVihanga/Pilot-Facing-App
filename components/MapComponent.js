@@ -1,86 +1,215 @@
-import React, { useState } from 'react'
-import ReactMapboxGL, { Source, Layer } from '@urbica/react-map-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import geojsonArea from '@mapbox/geojson-area'
+import React, { useState, useRef, useEffect } from 'react'
+import mapboxgl from 'mapbox-gl'
+import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import "mapbox-gl/dist/mapbox-gl.css";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 
-const MapComponent = () => {
-    const [viewport, setViewport] = useState({
-        latitude: 45.137451,
-        longitude: -68.137343,
-        zoom: 5
-    })
+const mapStyles = [
+    {
+        name: "light",
+        sattelite: false,
+        style: "mapbox://styles/onextechsolutions/ckxwst8bk4zkp15t393otx51q",
+    },
+    {
+        name: "sattelite",
+        sattelite: true,
+        style: "mapbox://styles/mapbox/satellite-v9",
+    },
+];
 
-    const geoJsonData = {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Polygon',
-            // These coordinates outline Maine.
-            'coordinates': [
-                [
-                    [-67.13734, 45.13745],
-                    [-66.96466, 44.8097],
-                    [-68.03252, 44.3252],
-                    [-69.06, 43.98],
-                    [-70.11617, 43.68405],
-                    [-70.64573, 43.09008],
-                    [-70.75102, 43.08003],
-                    [-70.79761, 43.21973],
-                    [-70.98176, 43.36789],
-                    [-70.94416, 43.46633],
-                    [-71.08482, 45.30524],
-                    [-70.66002, 45.46022],
-                    [-70.30495, 45.91479],
-                    [-70.00014, 46.69317],
-                    [-69.23708, 47.44777],
-                    [-68.90478, 47.18479],
-                    [-68.2343, 47.35462],
-                    [-67.79035, 47.06624],
-                    [-67.79141, 45.70258],
-                    [-67.13734, 45.13745]
-                ]
-            ]
+const MapComponent = ({ center, zoom, polygon, area }) => {
+    const [mapStyle, setMapStyle] = useState(mapStyles[0]);
+    const mapContainer = useRef(null);
+    const [mapObject, setMap] = useState();
+    const map = useRef(null);
+
+    useEffect(() => {
+        mapboxgl.accessToken = process.env.NEXT_MAPBOX_TOKEN ?? "";
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: mapStyle.style,
+            center: center,
+            zoom: zoom
+        })
+
+        let Draw = new MapboxDraw({
+            defaultMode: "draw_polygon",
+            displayControlsDefault: false,
+            userProperties: true,
+
+            styles: map_styles,
+        });
+        
+        map.current.addControl(Draw, "top-left");
+
+
+        map.current.on('load', () => {
+            // Set polygon to context state
+            if (polygon != undefined) {
+                Draw.set(polygon)
+            }
+        })
+
+    }, [mapStyle])
+
+    const handleMapStyle = () => {
+        if (mapStyle.sattelite == true) {
+            setMapStyle(mapStyles[0]);
+        } else {
+            setMapStyle(mapStyles[1]);
         }
-
-    }
+    };
 
     return (
-        <div>
-            <ReactMapboxGL
-                className='w-full h-[300px] relative rounded-2xl'
-                mapStyle={'mapbox://styles/onextechsolutions/ckxwst8bk4zkp15t393otx51q'}
-                accessToken={process.env.NEXT_MAPBOX_TOKEN}
-                onViewportChange={viewport => setViewport(viewport)}
-                {...viewport}
-            >
-                <Source
-                    id='maine'
-                    type="geojson"
-                    data={geoJsonData}
-                />
+        <div className={`w-full h-[300px] relative rounded-2xl`}>
+            <div className="overflow-hidden rounded-lg map-container w-full h-full relative" ref={mapContainer}>
+                <div
+                    onClick={handleMapStyle}
+                    className={
+                        mapStyle.sattelite
+                            ? `bg-[#00000042] cursor-pointer absolute top-3 right-3 bg-red z-20 border border-solid py-1 px-2 rounded-md bg-sattelite text-white font-poppins uppercase`
+                            : `bg-[#00000042] cursor-pointer absolute top-3 right-3 bg-red z-20 border border-solid py-1 px-2 rounded-md bg-input-bg uppercase text-white `
+                    }
+                >
+                    {mapStyle.name}
+                </div>
 
-                <Layer
-                    id="maine"
-                    type="fill"
-                    source="maine"
-                    paint={{
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.4
-                    }}
-                />
-                <Layer
-                    id="outline"
-                    type="line"
-                    source="maine"
-                    paint={{
-                        'line-color': 'blue',
-                        'line-width': 2
-                    }}
-                />
-                <h2 className='absolute bg-white p-4 rounded-md bottom-10 left-8 shadow-xl font-bold text-lg'>{geojsonArea.geometry(geoJsonData.geometry)} m<sup>2</sup> </h2>
-            </ReactMapboxGL>
-
+                <div className="bg-white absolute p-3 bottom-9 left-2 rounded-lg z-20 font-semibold text-lg">{area} m<sup>2</sup></div>
+            </div>
         </div>
     )
 }
 
 export default MapComponent
+
+
+const map_styles = [
+    {
+        id: "gl-draw-polygon-fill-inactive",
+        type: "fill",
+        filter: [
+            "all",
+            ["==", "active", "false"],
+            ["==", "$type", "Polygon"],
+            ["!=", "mode", "static"],
+        ],
+        paint: {
+            "fill-color": [
+                "case",
+                ["==", ["get", "user_class_id"], 1],
+                "rgba(0, 102, 255, 0.50)",
+                ["==", ["get", "user_class_id"], 2],
+                "rgba(0, 102, 255, 0.50)",
+                "rgba(0, 102, 255, 0.50)",
+            ],
+            "fill-outline-color": "rgba(0, 102, 255, 0.50)",
+            "fill-opacity": 0.5,
+        },
+    },
+    {
+        id: "gl-draw-polygon-fill-active",
+        type: "fill",
+        filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
+        paint: {
+            "fill-color": "#22d3ee",
+            "fill-outline-color": "rgba(0, 102, 255, 0.50)",
+            "fill-opacity": 0.1,
+        },
+    },
+    {
+        id: "gl-draw-polygon-midpoint",
+        type: "circle",
+        filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
+        paint: {
+            "circle-radius": 3,
+            "circle-color": "#fbb03b",
+        },
+    },
+    {
+        id: "gl-draw-polygon-stroke-inactive",
+        type: "line",
+        filter: [
+            "all",
+            ["==", "active", "false"],
+            ["==", "$type", "Polygon"],
+            ["!=", "mode", "static"],
+        ],
+        layout: {
+            "line-cap": "round",
+            "line-join": "round",
+        },
+        paint: {
+            "line-color": "rgba(0, 102, 255, 0.50)",
+            "line-width": 2,
+        },
+    },
+    {
+        id: "gl-draw-polygon-stroke-active",
+        type: "line",
+        filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
+        layout: {
+            "line-cap": "round",
+            "line-join": "round",
+        },
+        paint: {
+            "line-color": "rgba(0, 102, 255, 0.15)",
+
+            "line-width": 4,
+        },
+    },
+
+    {
+        id: "gl-draw-polygon-and-line-vertex-stroke-inactive",
+        type: "circle",
+        filter: [
+            "all",
+            ["==", "meta", "vertex"],
+            ["==", "$type", "Point"],
+            ["!=", "mode", "static"],
+        ],
+        paint: {
+            "circle-radius": 5,
+            "circle-color": "#fff",
+        },
+    },
+    {
+        id: "gl-draw-polygon-and-line-vertex-inactive",
+        type: "circle",
+        filter: [
+            "all",
+            ["==", "meta", "vertex"],
+            ["==", "$type", "Point"],
+            ["!=", "mode", "static"],
+        ],
+        paint: {
+            "circle-radius": 5,
+            "circle-color": "#fff",
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "rgba(0, 102, 255, 0.50)",
+        },
+    },
+
+    {
+        id: "gl-draw-polygon-fill-static",
+        type: "fill",
+        filter: ["all", ["==", "mode", "static"], ["==", "$type", "Polygon"]],
+        paint: {
+            "fill-color": "#22d3ee",
+            "fill-outline-color": "#0369a1",
+            "fill-opacity": 0.1,
+        },
+    },
+    {
+        id: "gl-draw-polygon-stroke-static",
+        type: "line",
+        filter: ["all", ["==", "mode", "static"], ["==", "$type", "Polygon"]],
+        layout: {
+            "line-cap": "round",
+            "line-join": "round",
+        },
+        paint: {
+            "line-color": "rgba(0, 102, 255, 0.15)",
+            "line-width": 2,
+        },
+    },
+]

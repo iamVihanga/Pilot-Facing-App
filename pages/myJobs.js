@@ -6,8 +6,8 @@ const MyJobs = () => {
     return (
         <DashboardLayout
             headerComponent={
-                <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white">
-                    <img src={'/assets/logo.jpg'} alt='logo' className='w-[50%] mt-4 mb-3' />
+                <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white shadow-md">
+                    <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mt-4 mb-4' />
                 </div>
             }
         >
