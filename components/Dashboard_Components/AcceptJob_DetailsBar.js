@@ -5,8 +5,10 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 import formatAMPM from "../../utils/formatTime";
 import { useSelector } from "react-redux";
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const AcceptJob_DetailsBar = ({ jobID }) => {
+  const router = useRouter()
   const [dayStr, setDayStr] = useState(null);
   const [arrivalTime, setArrivalTime] = useState(null);
   const currentUser = useSelector(state => state.currentUser.currentUser)
@@ -28,8 +30,10 @@ const AcceptJob_DetailsBar = ({ jobID }) => {
           pilotID: currentUser.id
         }
       })
-
+      
       setLoading(false)
+      
+      if (data.success) router.push('/dashboard/myJobs')
     } catch (err) {
       setLoading(false)
     }
