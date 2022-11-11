@@ -5,6 +5,7 @@ import { ArrowRightIcon, HomeModernIcon } from "@heroicons/react/24/outline";
 import JobCard from './JobCard';
 import DropdownSelector from './DropdownSelector';
 
+
 const JobListLayout = ({ data }) => {
     const router = useRouter()
     const isHome = router.pathname === '/dashboard'
@@ -31,6 +32,7 @@ const JobListLayout = ({ data }) => {
     return (
         <div className='w-full  flex flex-row h-full'>
             {/* Job List Area */}
+
             <div className="flex-1 mx-4 py-7">
                 {/* Head */}
                 <div className=" flex flex-row w-full justify-between items-center">

@@ -32,7 +32,7 @@ const JobCard = ({ data }) => {
     const handleOnClick = () => {
         dispatch(setActiveJob(data.JobID))
 
-        if (typeof window !== "undefined" && data.state !== 'Available') {
+        if (typeof window !== "undefined" && data.status !== 'Available') {
             // Client-side-only code
             let screenWidth = window.screen.width
             if (screenWidth < 1024) {

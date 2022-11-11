@@ -1,4 +1,4 @@
-import { DashboardLayout, JobListLayout, Mobile_AvailableJob, FullScreenLoading } from "../../components";
+import { DashboardLayout, JobListLayout, Mobile_AvailableJob } from "../../components";
 import { useSelector } from 'react-redux'
 import { useUser, useSessionContext } from '@supabase/auth-helpers-react'
 import { useEffect } from "react";
@@ -25,22 +25,19 @@ export default function Home({ jobListing }) {
 
   return (
     <>
-      {/* {(isLoading || !user) ? <FullScreenLoading /> : */}
-      <>
-        {(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && <Mobile_AvailableJob />}
-        <DashboardLayout
-          className={(screenWidth < 1024 && Object.keys(activeJob).length !== 0) && 'hidden'}
-          headerComponent={
-            <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white shadow-md">
-              <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mt-4 mb-4' />
-            </div>
-          }
-        >
+    
+      {(screenWidth < 1024 && activeJob !== null) && <Mobile_AvailableJob />}
+      <DashboardLayout
+        className={(screenWidth < 1024 && activeJob !== null) && 'hidden'}
+        headerComponent={
+          <div className="lg:hidden w-full z-10 fixed flex items-center justify-center bg-white shadow-md">
+            <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mt-4 mb-4' />
+          </div>
+        }
+      >
 
-          <JobListLayout data={jobListing} />
-        </DashboardLayout>
-      </>
-      {/* } */}
+        <JobListLayout data={jobListing} />
+      </DashboardLayout>
     </>
   )
 }

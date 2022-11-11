@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import '../styles/globals.css'
 import { Provider } from "react-redux";
 import store from '../redux/store'
@@ -7,6 +8,13 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import supabaseClient from '../config/supabaseClient'
 
 function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    const use = async () => {
+      (await import('tw-elements')).default;
+    };
+    use();
+  }, []);
+
   return (
     <SessionContextProvider
       supabaseClient={supabaseClient}

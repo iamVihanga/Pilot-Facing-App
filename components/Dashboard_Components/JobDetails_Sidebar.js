@@ -72,10 +72,9 @@ const JobDetails_Sidebar = () => {
                         <p className="text-black mt-3 font-normal text-base"><span className="font-semibold">Company: </span>{activeJob.customerID.companyName}</p>
                     </div>
 
-                    {console.log(activeJob.status)}
                     {activeJob.status === 'Available' ?
                         <div className='mt-16 mb-7'>
-                            <AcceptJob_DetailsBar timestamp={activeJob.date} />
+                            <AcceptJob_DetailsBar />
                         </div>
                         :
                         <div className='mt-10 mb-7' onClick={() => router.push(`/${activeJob.id}`)}>
