@@ -6,6 +6,7 @@ import { HomeIcon, LifebuoyIcon, BookmarkIcon, UserIcon, ArrowRightOnRectangleIc
 import { JobDetails_Sidebar } from "../";
 import { useSelector, useDispatch } from "react-redux";
 import { setActiveJob } from "../../redux/activeJobSlice";
+import supabaseClient from "../../config/supabaseClient";
 
 const DashboardLayout = ({ children, className, headerComponent }) => {
   const router = useRouter()
