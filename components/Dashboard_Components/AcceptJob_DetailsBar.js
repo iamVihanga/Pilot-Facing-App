@@ -3,13 +3,37 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import formatAMPM from "../../utils/formatTime";
+import { useSelector } from "react-redux";
+import axios from 'axios'
 
-const AcceptJob_DetailsBar = () => {
+const AcceptJob_DetailsBar = ({ jobID }) => {
   const [dayStr, setDayStr] = useState(null);
   const [arrivalTime, setArrivalTime] = useState(null);
+  const currentUser = useSelector(state => state.currentUser.currentUser)
+  const serverBaseUrl = process.env.NEXT_PUBLIC_BACKEND_BASEURL || 'https://duber-server.herokuapp.com'
+  const [loading, setLoading] = useState(false)
 
-  const handleAccept = () => {
-    console.log("accepted");
+  const handleAccept = async () => {
+    try {
+      setLoading(true)
+
+      const { data } = await axios({
+        method: "POST",
+        baseURL: serverBaseUrl,
+        url: '/pilots/accept-job',
+        headers: {},
+        data: {
+          jobID: jobID,
+          arrivalTime: arrivalTime,
+          pilotID: currentUser.id
+        }
+      })
+
+      setLoading(false)
+    } catch (err) {
+      setLoading(false)
+    }
+
   };
 
   return (
@@ -37,13 +61,21 @@ const AcceptJob_DetailsBar = () => {
           arrivalTime
             ? "bg-primaryTeal cursor-pointer"
             : "bg-gray-400 cursor-not-allowed"
-        } rounded-md sm:w-full lg:w-full h-16 md:w-fit`}
+        } rounded-md sm:w-full lg:w-full h-16 md:w-fit flex items-center justify-center`}
         onClick={handleAccept}
-        disabled={!arrivalTime}
+        disabled={!arrivalTime || loading}
       >
         {/* Accept Job */}
         <p className="text-2xl text-center text-white uppercase font-medium">
-          Accept Job
+          {!loading 
+            ? 'Accept Job'
+            :  (
+              <svg className="h-5 w-5 animate-spin text-white text-center" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            )
+          }
         </p>
       </button>
     </div>

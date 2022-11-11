@@ -74,11 +74,11 @@ const JobDetails_Sidebar = () => {
 
                     {activeJob.status === 'Available' ?
                         <div className='mt-16 mb-7'>
-                            <AcceptJob_DetailsBar />
+                            <AcceptJob_DetailsBar jobID={activeJob.id} />
                         </div>
                         :
                         <div className='mt-10 mb-7' onClick={() => router.push(`/${activeJob.id}`)}>
-                            <p className="text-2xl font-semibold text-gray-700">Arrival Time {formatAMPM(new Date(activeJob.date))}</p>
+                            <p className="text-2xl font-semibold text-gray-700">Arrival Time {activeJob.arrivalTime}</p>
 
                             <div className='mt-3 cursor-pointer bg-teal-300 rounded-md w-full px-3 py-5 flex items-center justify-center'>
                                 <p className="text-2xl font-semibold text-white uppercase">View Job</p>

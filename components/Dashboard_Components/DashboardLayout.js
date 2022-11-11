@@ -1,23 +1,19 @@
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import { HomeIcon, LifebuoyIcon, BookmarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { useRouter } from "next/router";
+import { HomeIcon, LifebuoyIcon, BookmarkIcon, UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { JobDetails_Sidebar } from "../";
-import { useUser, useSessionContext } from '@supabase/auth-helpers-react'
-import { getUserByEmail } from "../../config/supabaseFunctions";
+import { useSelector, useDispatch } from "react-redux";
+import { setActiveJob } from "../../redux/activeJobSlice";
 
 const DashboardLayout = ({ children, className, headerComponent }) => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const activeNav = router.pathname.slice(1)
   const accountPage = router.pathname === '/dashboard/account'
-  const { supabaseClient } = useSessionContext()
-  const [loading, setLoading] = useState(true)
-  const user = useUser()
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-
-
+  const currentUser = useSelector(state => state.currentUser.currentUser)
+  
   // ----------- screen width -------------
   let screenWidth
   if (typeof window !== "undefined") {
@@ -25,32 +21,6 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
     screenWidth = window.screen.width
   }
   // ----------------------------------------
-
-  useEffect(() => {
-    const getUserInfo = async () => {
-      setLoading(true)
-      try {
-        const { data, error } = await getUserByEmail(user.email)
-
-        if (error) throw error
-
-        if (data) {
-          setFirstName(data[0].firstName)
-          setLastName(data[0].lastName)
-          setLoading(false)
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    // Avoit data fetching when md, sm screens
-    if (screenWidth > 1023) {
-
-      getUserInfo()
-    }
-  }, [])
-
 
   const handlelogout = async () => {
     const { error } = await supabaseClient.auth.signOut()
@@ -67,14 +37,14 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
             <img src={'/assets/Duber logo.svg'} alt='logo' className='w-32 mb-5 cursor-pointer' />
           </Link>
           <div className="mt-8 flex flex-col gap-3">
-            <Link href='/dashboard'>
-              <a className={`sidenav-item ${activeNav == 'dashboard' && 'active'}`}>
+            <Link href='/dashboard' legacyBehavior>
+              <a onClick={() => dispatch(setActiveJob(null))} className={`sidenav-item ${activeNav == 'dashboard' && 'active'}`}>
                 <HomeIcon className='w-6 h-6' strokeWidth={2} />
                 <p className="text-base font-semibold">Job Listings</p>
               </a>
             </Link>
-            <Link href='/dashboard/myJobs'>
-              <a className={`sidenav-item ${activeNav == 'dashboard/myJobs' && 'active'}`}>
+            <Link href='/dashboard/myJobs' legacyBehavior>
+              <a onClick={() => dispatch(setActiveJob(null))} className={`sidenav-item ${activeNav == 'dashboard/myJobs' && 'active'}`}>
                 <BookmarkIcon className='w-6 h-6' strokeWidth={2} />
                 <p className="text-base font-semibold">My Jobs</p>
               </a>
@@ -100,18 +70,11 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
           <Link href="/dashboard/account">
             <div className={`cursor-pointer px-2 py-2 ${accountPage ? 'bg-primaryBlueLight' : 'bg-slate-300'} rounded-md flex flex-row items-center gap-2`} >
               <Image src="/assets/avatar.jpg" alt="avatar" width={40} height={40} className='rounded-md' />
-
-              {loading ?
-                <div>
-                  <div className={`min-w-[115px] min-h-[15px] rounded-full font-semibold text-sm bg-gray-400 opacity-70`}></div>
-                  <div className={`min-w-[115px] min-h-[10px] mt-1 rounded-full font-normal text-xs bg-gray-400 opacity-70`}></div>
-                </div>
-                :
-                <div>
-                  <p className={`font-semibold text-sm ${accountPage ? 'text-primaryBlue' : 'text-black'}`}>{firstName} {lastName}</p>
-                  <p className={`font-normal text-xs ${accountPage ? 'text-primaryBlue' : 'text-gray-500'}`}>Drone Pilot</p>
-                </div>
-              }
+              
+              <div>
+                <p className={`font-semibold text-sm ${accountPage ? 'text-primaryBlue' : 'text-black'}`}>{currentUser.firstName} {currentUser.lastName}</p>
+                <p className={`font-normal text-xs ${accountPage ? 'text-primaryBlue' : 'text-gray-500'}`}>Drone Pilot</p>
+              </div>
             </div>
           </Link>
         </div>

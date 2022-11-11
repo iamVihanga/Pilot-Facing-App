@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ArrowRightIcon, HomeModernIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import JobCard from './JobCard';
 import DropdownSelector from './DropdownSelector';
-
+import { useSelector, useDispatch } from "react-redux";
+import { setActiveJob } from "../../redux/activeJobSlice";
 
 const JobListLayout = ({ data }) => {
     const router = useRouter()
+    const dispatch = useDispatch()
+    const currentUser = useSelector(state => state.currentUser.currentUser)
     const isHome = router.pathname === '/dashboard'
     const isMyJobs = router.pathname === '/dashboard/myJobs'
-    let dataSet = data
+
+    const [myJobsList_glob, setMyJobsList__glob] = useState([]) // this used as a constant array for filtering
+    const [myJobsList, setMyJobsList] = useState([])
+    const [availableList, setAvailableList] = useState([])
+    const [liveCount, setLiveCount] = useState(0)
+    const [complteCount, setCompleteCount] = useState(0)
 
     // Filtering for My Jobs section
     const filterItems = [
@@ -20,12 +28,32 @@ const JobListLayout = ({ data }) => {
     ]
     const [activeFilter, setActiveFilter] = useState(filterItems[0])
 
+    // Handle filter select
     useEffect(() => {
-        // Implement API Request for filtering
-        // console.log(activeFilter.label)
-        // -----------------------------------
+        if (activeFilter.label !== 'Every Status') {
+            let filtered_list = myJobsList_glob.filter(job => job.status === activeFilter.label)
+            setMyJobsList(filtered_list)   
+        }
     }, [activeFilter])
 
+    // handle sort out dataset
+    useEffect(() => {
+        let myLiveJobsList = []
+        let myCompleteJobsList = []
+
+        let availableList_data = data.filter(item => item.status === "Available")
+        setAvailableList(availableList_data)
+        
+        let myJobsList_data = data.filter(item => item.pilotID === currentUser.id)
+        setMyJobsList(myJobsList_data)
+        setMyJobsList__glob(myJobsList_data)
+
+        myLiveJobsList = myJobsList_data.filter(item => item.status === 'Live')
+        myCompleteJobsList = myJobsList_data.filter(item => item.status === 'Completed')
+
+        setLiveCount(myLiveJobsList.length)
+        setCompleteCount(myCompleteJobsList.length)
+    }, [currentUser])
     // -----------------------------------
 
 
@@ -46,16 +74,16 @@ const JobListLayout = ({ data }) => {
                     <div>
                         {isHome &&
                             <div className="flex items-center gap-2">
-                                <Link href='/myJobs'>
-                                    <a className='font-medium text-xs text-gray-400'>Go to My Jobs</a>
+                                <Link href='/dashboard/myJobs' legacyBehavior>
+                                    <a onClick={() => dispatch(setActiveJob(null))} className='font-medium text-xs text-gray-400'>Go to My Jobs</a>
                                 </Link>
                                 <ArrowRightIcon className='w-4 h-4 text-gray-400' />
                             </div>
                         }
                         {isMyJobs &&
                             <div className="flex items-center gap-2">
-                                <Link href='/'>
-                                    <a className='font-medium text-xs text-gray-400'>Go to Job Listing</a>
+                                <Link href='/dashboard' legacyBehavior>
+                                    <a onClick={() => dispatch(setActiveJob(null))} className='font-medium text-xs text-gray-400'>Go to Job Listing</a>
                                 </Link>
                                 <ArrowRightIcon className='w-4 h-4 text-gray-400' />
                             </div>
@@ -69,20 +97,30 @@ const JobListLayout = ({ data }) => {
 
                 {/* Area */}
                 <div className="mt-4 bg-white rounded-lg w-full sm:p-5 p-3 flex flex-col gap-6">
-                    {/* Card List */}
-                    {dataSet.length !== 0 && dataSet.map(item => <JobCard data={item} key={item.JobID} />)}
+                    {/* Available List for Homepage */}
+                    {(isHome && availableList.length !== 0) 
+                    && availableList.map(item => <JobCard data={item} key={item.JobID} />)}
+                    
+                    {/* My Jobs list for /myJobs page */}
+                    {(isMyJobs && myJobsList.length !== 0) 
+                    && myJobsList.map(item => <JobCard data={item} key={item.JobID} />)}
+
                 </div>
 
                 {isHome &&
                     <div className="mt-4 grid grid-cols-2 h-36 gap-4">
                         <div className="rounded-md w-full h-full bg-white flex flex-col items-center justify-center">
                             <p className="sm:text-sm text-xs text-gray-400">Total Live Jobs</p>
-                            <p className="text-2xl mt-2 text-black font-semibold">3</p>
+                            <p className="text-2xl mt-2 text-black font-semibold">
+                                {liveCount}
+                            </p>
                             <div className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-500">Live</div>
                         </div>
                         <div className="rounded-md w-full h-full bg-white flex flex-col items-center justify-center">
                             <p className="sm:text-sm text-xs text-gray-400">Total Completed Jobs</p>
-                            <p className="text-2xl mt-2 text-black font-semibold">3</p>
+                            <p className="text-2xl mt-2 text-black font-semibold">
+                                {complteCount}
+                            </p>
                             <div className="px-8 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-500">Completed</div>
                         </div>
                     </div>

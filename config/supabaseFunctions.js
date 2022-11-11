@@ -116,7 +116,8 @@ export const getSingleJob = async (jobID) => {
             mapData,
             area,
             customerNote,
-            status
+            status,
+            arrivalTime
         `)
         .eq("id", jobID)
 

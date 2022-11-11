@@ -1,8 +1,8 @@
 import React from 'react'
 import { DashboardLayout, JobListLayout } from '../../components'
-import { myJobs_dummy } from "../../utils/myJobs_dummy";
+import { getJobListing } from "../../config/supabaseFunctions";
 
-const MyJobs = () => {
+const MyJobs = ({ jobListing }) => {
     return (
         <DashboardLayout
             headerComponent={
@@ -11,9 +11,19 @@ const MyJobs = () => {
                 </div>
             }
         >
-            {/* <JobListLayout data={myJobs_dummy} /> */}
+            <JobListLayout data={jobListing} />
         </DashboardLayout>
     )
 }
 
 export default MyJobs
+
+export async function getServerSideProps() {
+    const { data, error } = await getJobListing()
+  
+    return {
+      props: {
+        jobListing: data
+      }
+    }
+  }

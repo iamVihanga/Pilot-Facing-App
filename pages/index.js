@@ -5,7 +5,6 @@ import redirectHandler from "../utils/redirectHandler";
 const Index = () => {
   const router = useRouter()
   redirectHandler(router)
-  
 
   return (
     <div>
