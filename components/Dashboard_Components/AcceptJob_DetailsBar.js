@@ -21,9 +21,7 @@ const AcceptJob_DetailsBar = ({ jobID }) => {
     try {
       setLoading(true);
 
-      console.log(jobID,
-        arrivalTime,
-        currentUser.id)
+      console.log(jobID, arrivalTime, currentUser.id);
 
       const { data } = await axios({
         method: "POST",
@@ -78,7 +76,7 @@ const AcceptJob_DetailsBar = ({ jobID }) => {
           arrivalTime
             ? "bg-primaryTeal cursor-pointer"
             : "bg-gray-400 cursor-not-allowed"
-        } rounded-md w-full h-16 md:w-fit md:px-3 flex items-center justify-center`}
+        } rounded-md w-full md:w-fit lg:w-full h-16 md:px-3 flex items-center justify-center`}
         onClick={handleAccept}
         disabled={!arrivalTime || loading}
       >

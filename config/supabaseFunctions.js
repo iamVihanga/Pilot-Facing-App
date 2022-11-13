@@ -1,107 +1,103 @@
-import supabase from './supabaseClient'
+import supabase from "./supabaseClient";
 import customerClient from "./customerClient";
 
 export const insertToUsers = async (formData) => {
-    let { data, error } = await supabase
-        .from('Employees')
-        .insert(formData)
+  let { data, error } = await supabase.from("Employees").insert(formData);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const updateUser = async (formData, email) => {
-    let { error } = await supabase
-        .from('Employees')
-        .update(formData)
-        .eq('email', email)
+  let { error } = await supabase
+    .from("Employees")
+    .update(formData)
+    .eq("email", email);
 
-    return { error }
-}
+  return { error };
+};
 
 export const uploadProofFile = async (file) => {
-    let { data, error } = await supabase
-        .storage
-        .from('user-data')
-        .upload(`proofAndCertificates/${new Date().toISOString()}-${file.name}`, file, {
-            cacheControl: '3600',
-            upsert: false
-        })
+  let { data, error } = await supabase.storage
+    .from("user-data")
+    .upload(
+      `proofAndCertificates/${new Date().toISOString()}-${file.name}`,
+      file,
+      {
+        cacheControl: "3600",
+        upsert: false,
+      }
+    );
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const getUserByEmail = async (email) => {
-    let { data, error } = await supabase
-        .from('Employees')
-        .select()
-        .eq('email', email)
+  let { data, error } = await supabase
+    .from("Employees")
+    .select()
+    .eq("email", email);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const getDrones = async () => {
-    let { data, error } = await supabase
-        .from('DroneEquipment')
-        .select(`
+  let { data, error } = await supabase.from("DroneEquipment").select(`
             id,
             model,
             brand (
                 name
             )
-        `)
+        `);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const signupUser = async (credentials) => {
-    const { data, error } = await supabase
-        .auth
-        .signUp(credentials)
+  const { data, error } = await supabase.auth.signUp(credentials);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const signinUser = async (credentials) => {
-    const { data, error } = await supabase.auth.signInWithPassword(credentials)
+  const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const getSession = async () => {
-    const { data, error } = await supabase.auth.getSession()
+  const { data, error } = await supabase.auth.getSession();
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const updateAuthEmail = async (emailToUpdate) => {
-    const { data, error } = await supabase.auth.updateUser({
-        email: emailToUpdate
-    })
+  const { data, error } = await supabase.auth.updateUser({
+    email: emailToUpdate,
+  });
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const getUserDetails = async (email) => {
-    const { data, error } = await supabase
-        .from('Employees')
-        .select('*')
-        .eq('email', email)
+  const { data, error } = await supabase
+    .from("Employees")
+    .select("*")
+    .eq("email", email);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export const getJobListing = async () => {
-    const res = await supabase
-        .from('Jobs')
-        .select()
+  const res = await supabase.from("Jobs").select();
 
-    return res
-}
+  return res;
+};
 
 export const getSingleJob = async (jobID) => {
-    const res = await customerClient
-        .from('Orders')
-        .select(`
+  const res = await customerClient
+    .from("Orders")
+    .select(
+      `
             pilotExpertize,
             id,
             address,
@@ -118,8 +114,29 @@ export const getSingleJob = async (jobID) => {
             customerNote,
             status,
             arrivalTime
-        `)
-        .eq("id", jobID)
+        `
+    )
+    .eq("id", jobID);
 
-    return res
-}
+  return res;
+};
+
+export const completeJob = async (files, jobID) => {
+  // Upload files one by one
+  const result = await Promise.all(
+    files.map(async (file) => {
+      const res = await customerClient.storage
+        .from("order-assets")
+        .upload(`Order-${jobID}/${file.name}`, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (res.error) throw new Error(`File ${file.name} Upload failed !`);
+
+      if (res.data) return file.name;
+    })
+  );
+
+  return result;
+};

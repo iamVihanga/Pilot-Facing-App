@@ -16,7 +16,8 @@ import formatBytes from "../../../utils/formatBytes";
 import { useDropzone } from "react-dropzone";
 import { useDispatch } from "react-redux";
 import { setActiveJob } from "../../../redux/activeJobSlice";
-import { getSingleJob } from "../../../config/supabaseFunctions";
+import { getSingleJob, completeJob } from "../../../config/supabaseFunctions";
+import axios from "axios";
 
 const SinglePage = () => {
   const {
@@ -31,25 +32,31 @@ const SinglePage = () => {
   const [loading, setLoading] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showNotification, setShowNotification] = useState(router.query?.isNew);
+  const [error, setError] = useState(null);
+  const [uploading, setUploading] = useState(null);
+  const [notificationText, setNotificationText] = useState(
+    router.query?.isNew ? "Job Accepted Successfully !" : null
+  );
 
   const activeJobID = router.query.id;
   const [currentJob, setCurrentJob] = useState({});
 
+  // Fetch active job function -> this used in effect and time which needs to refetch data
+  const fetchActiveJob = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await getSingleJob(activeJobID);
+      if (error) throw new Error("Fetching job details failed !");
+
+      setCurrentJob(data[0]);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchActiveJob = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await getSingleJob(activeJobID);
-        if (error) throw new Error("Fetching job details failed !");
-
-        setCurrentJob(data[0]);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-        setLoading(false);
-      }
-    };
-
     fetchActiveJob();
   }, []);
 
@@ -75,6 +82,42 @@ const SinglePage = () => {
     router.back();
   };
 
+  // Handle submit
+  const handleSubmit = async () => {
+    try {
+      setError(null);
+      setUploading("Uploading Files...");
+      const res = await completeJob(uploadedFiles, currentJob.id);
+
+      // backend request for complete job
+      setUploading("Completing Job...");
+      // --------------------------------------
+      const serverUrl =
+        process.env.NEXT_PUBLIC_BACKEND_BASEURL ||
+        "https://duber-server.herokuapp.com/";
+
+      const { data } = await axios({
+        method: "POST",
+        baseURL: serverUrl,
+        url: `/pilots/complete-job`,
+        headers: {},
+        data: {
+          jobID: currentJob.id,
+          assetsList: res,
+        },
+      });
+
+      setNotificationText(data.message);
+      setShowNotification(true);
+      setUploading(null);
+
+      fetchActiveJob();
+    } catch (err) {
+      setError(err.message);
+      setUploading(null);
+    }
+  };
+
   return (
     <>
       {/* --------------Notification-------------- */}
@@ -85,7 +128,7 @@ const SinglePage = () => {
               <CheckIcon className="w-5 h-5 text-teal-500" strokeWidth={3} />
             </div>
 
-            <p className="text-teal-600">Job Accepted Successfully !</p>
+            <p className="text-teal-600">{notificationText}</p>
           </div>
           <XMarkIcon
             onClick={() => setShowNotification(false)}
@@ -227,7 +270,7 @@ const SinglePage = () => {
               {/* File Upload */}
               {currentJob.status === "Live" && (
                 <div className="mt-5 sm:mx-12 mx-3">
-                  <section className="cursor-pointer">
+                  <section className="cursor-pointer mb-5">
                     <div
                       {...getRootProps({
                         className: `dropzone ${isFocused && "focused"} ${
@@ -253,14 +296,46 @@ const SinglePage = () => {
                     )}
                   </section>
 
+                  {error && (
+                    <p className="text-xs text-red-500 mb-2">{error}</p>
+                  )}
+
                   <button
                     className={`${
                       uploadedFiles.length === 0
                         ? "disabled bg-gray-400"
                         : "bg-teal-400"
-                    } mt-5 w-full py-5 rounded-lg  text-white sm:text-xl text-base font-semibold`}
+                    } w-full py-5 rounded-lg  text-white sm:text-xl text-base font-semibold`}
+                    onClick={handleSubmit}
                   >
-                    Upload file to complete job
+                    {uploading === null ? (
+                      "Upload file to complete job"
+                    ) : (
+                      <div className="flex items-center w-full justify-center">
+                        <svg
+                          className="h-7 w-7 animate-spin text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+
+                        <p className="ml-3">{uploading}</p>
+                      </div>
+                    )}
                   </button>
                 </div>
               )}
