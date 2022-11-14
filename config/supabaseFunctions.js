@@ -140,3 +140,23 @@ export const completeJob = async (files, jobID) => {
 
   return result;
 };
+
+export const updateProfilePicture = async (file, userId) => {
+  const random_int = Math.floor(Math.random() * 100000);
+
+  const res = await supabase.storage
+    .from("profile-pics")
+    .upload(`pilot-${userId}/${random_int}-${file.name}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (!res.error) {
+    await supabase
+      .from("Employees")
+      .update({ profilePic: res.data.path })
+      .eq("id", userId);
+  }
+
+  return res;
+};

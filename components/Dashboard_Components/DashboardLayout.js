@@ -20,6 +20,7 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
   const activeNav = router.pathname.slice(1);
   const accountPage = router.pathname === "/dashboard/account";
   const currentUser = useSelector((state) => state.currentUser.currentUser);
+  const current_profilePicUrl = `${process.env.NEXT_SUPABASE_STORAGE_BASEURL}/profile-pics/${currentUser?.profilePic}`;
 
   // ----------- screen width -------------
   let screenWidth;
@@ -100,12 +101,14 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
                   accountPage ? "bg-primaryBlueLight" : "bg-slate-300"
                 } rounded-md flex flex-row items-center gap-2`}
               >
-                <Image
-                  src="/assets/avatar.jpg"
+                <img
+                  src={
+                    currentUser.profilePic
+                      ? current_profilePicUrl
+                      : "/assets/avatar.jpg"
+                  }
                   alt="avatar"
-                  width={40}
-                  height={40}
-                  className="rounded-md"
+                  className="rounded-md w-10 h-10"
                 />
 
                 <div>
