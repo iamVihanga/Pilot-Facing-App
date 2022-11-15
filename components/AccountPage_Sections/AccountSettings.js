@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import {
   updateAuthEmail,
   updateProfilePicture,
+  updateUserPassword,
 } from "../../config/supabaseFunctions";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { DecryptPassword } from "../../utils/passwordSecure";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  PencilSquareIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { ShowPasswordEye, LoadingSpinner } from "../../components";
 
 const AccountSettings = ({ user }) => {
   const [emailToUpdate, setEmailToUpdate] = useState(
@@ -19,12 +17,24 @@ const AccountSettings = ({ user }) => {
   const current_profilePicUrl = `${process.env.NEXT_SUPABASE_STORAGE_BASEURL}/profile-pics/${user?.profilePic}`;
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState(null);
-  const [repeatPassword, setRepeatPassword] = useState(null);
-
+  const [newPassword, setNewPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
   const [dpOverlay, setDpOverlay] = useState(false);
   const [profilePic, setProfilePic] = useState(current_profilePicUrl);
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
+  const [updatingEmail, setUpdatingEmail] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+
+  // ----------------------------------------------------------------
+  const handleUpdateAuthEmail = async () => {
+    setUpdatingEmail(true);
+
+    const { data, error } = await updateAuthEmail(emailToUpdate);
+
+    setUpdatingEmail(false);
+  };
 
   const handleProfilePicureChange = () => {
     var f = document.createElement("input");
@@ -59,6 +69,19 @@ const AccountSettings = ({ user }) => {
       }
     });
   };
+
+  const handlePasswordUpdate = async () => {
+    try {
+      setUpdatingPassword(true);
+      const res = await updateUserPassword(newPassword, user.email);
+
+      console.log(res);
+      setUpdatingPassword(false);
+    } catch (err) {
+      setUpdatingPassword(false);
+    }
+  };
+  // ----------------------------------------------------------------
 
   return (
     <div>
@@ -95,14 +118,18 @@ const AccountSettings = ({ user }) => {
                 value={emailToUpdate}
                 onChange={(e) => setEmailToUpdate(e.target.value)}
                 type="text"
-                className="form-input sm:w-72 w-32 sm:py-3 py-3 px-3 text-xs"
+                className="form-input sm:w-72 w-full sm:py-3 py-3 px-3 text-base"
                 placeholder="Jaime@hysurv.com"
               />
               <button
-                onClick={() => updateAuthEmail(emailToUpdate)}
-                className="sm:py-3 py-3 sm:px-9 px-3 bg-skyBlue sm:text-sm text-xs font-semibold text-white rounded-md"
+                onClick={handleUpdateAuthEmail}
+                className="sm:py-3 py-3 sm:w-36 w-32 bg-skyBlue sm:text-sm text-xs font-semibold text-white rounded-md flex items-center justify-center"
               >
-                Change
+                {updatingEmail ? (
+                  <LoadingSpinner width={5} height={5} color={"white"} />
+                ) : (
+                  "Change"
+                )}
               </button>
             </div>
           </div>
@@ -126,26 +153,7 @@ const AccountSettings = ({ user }) => {
                     <p className="text-white text-sm">Edit</p>
                   </>
                 ) : (
-                  <svg
-                    className="h-5 w-5 animate-spin text-white text-center"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <LoadingSpinner color={"white"} width={5} height={5} />
                 )}
               </div>
             )}
@@ -164,37 +172,81 @@ const AccountSettings = ({ user }) => {
             <p className="text-gray-400 mt-4 sm:text-base text-sm">
               Current Password
             </p>
-            <input
-              type={showCurrentPassword ? "text" : "password"}
-              className="mt-2 form-input sm:w-72 w-full py-3 px-3 sm:text-sm text-xs"
-              placeholder="You current password"
-              value={DecryptPassword(user.password)}
-            />
+
+            <div className="mt-2 form-input sm:w-72 w-full px-3 flex items-center justify-between">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                className="text-base py-3 bg-transparent outline-none"
+                placeholder="You current password"
+                value={DecryptPassword(user.password)}
+                disabled
+              />
+
+              <ShowPasswordEye
+                isVisible={showCurrentPassword}
+                setIsVisible={setShowCurrentPassword}
+              />
+            </div>
           </div>
           <div className="flex-1  lg:max-w-none w-full">
             <p className="text-gray-400 mt-4 sm:text-base text-sm">
               New Password
             </p>
-            <input
-              type="password"
-              className="mt-2 form-input sm:w-72 w-full py-3 px-3 sm:text-sm text-xs"
-              placeholder=""
-            />
+
+            <div className="mt-2 form-input sm:w-72 w-full px-3 flex items-center justify-between">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                className="text-base py-3 bg-transparent outline-none"
+                placeholder=""
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+
+              <ShowPasswordEye
+                isVisible={showNewPassword}
+                setIsVisible={setShowNewPassword}
+              />
+            </div>
           </div>
           <div className="flex-1  lg:max-w-none w-full">
             <p className="text-gray-400 mt-4 sm:text-base text-sm">
               Repeat Password
             </p>
-            <input
-              type="password"
-              className="mt-2 form-input sm:w-72 w-full py-3 px-3 sm:text-sm text-xs"
-              placeholder=""
-            />
+            <div
+              className={`mt-2 form-input sm:w-72 w-full px-3 flex items-center justify-between ${
+                newPassword &&
+                newPassword.length !== 0 &&
+                repeatPassword &&
+                repeatPassword.length !== 0 &&
+                repeatPassword !== newPassword &&
+                "border border-red-500"
+              }`}
+            >
+              <input
+                type={showRepeatPassword ? "text" : "password"}
+                placeholder=""
+                value={repeatPassword}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+                className={`text-base py-3 bg-transparent outline-none`}
+              />
+
+              <ShowPasswordEye
+                isVisible={showRepeatPassword}
+                setIsVisible={setShowRepeatPassword}
+              />
+            </div>
           </div>
 
           <div className="sm:mt-0 mt-3">
-            <button className="py-3 px-12 bg-skyBlue text-sm font-semibold text-white rounded-md">
-              Update
+            <button
+              className="py-3 w-32 sm:w-36 bg-skyBlue text-sm font-semibold text-white rounded-md flex items-center justify-center"
+              onClick={handlePasswordUpdate}
+            >
+              {updatingPassword ? (
+                <LoadingSpinner width={5} height={5} color={"white"} />
+              ) : (
+                "Update"
+              )}
             </button>
           </div>
         </div>

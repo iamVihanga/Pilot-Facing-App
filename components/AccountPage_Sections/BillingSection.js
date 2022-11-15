@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { LightCheckbox } from "../";
+import { CheckboxTeal, LoadingSpinner } from "../";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const BillingSection = ({ user }) => {
   const { supabaseClient } = useSessionContext();
   // ----------------- Element States ---------------------
-  const [userID, setUserID] = useState(null);
+  const [userID, setUserID] = useState(user.id);
 
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
@@ -51,7 +51,7 @@ const BillingSection = ({ user }) => {
 
         if (error) throw error;
 
-        if (data) {
+        if (data && data.length !== 0) {
           setStreet(data[0].street);
           setCity(data[0].city);
           setPostalCode(data[0].postCode);
@@ -135,8 +135,6 @@ const BillingSection = ({ user }) => {
             .eq("userId", userID);
 
           if (updateErr) throw updateErr;
-
-          console.log(updateData);
         }
       }
       setUpdating(false);
@@ -191,7 +189,7 @@ const BillingSection = ({ user }) => {
             value={street}
             onChange={(e) => setStreet(e.target.value)}
             type="text"
-            className="sm:hidden flex mt-4 w-full form-input text-xs py-3"
+            className="sm:hidden flex mt-4 w-full form-input text-base py-3"
             placeholder="59 Washbrook Road"
           />
           <div className="flex flex-row gap-3 mt-3">
@@ -199,28 +197,28 @@ const BillingSection = ({ user }) => {
               value={street}
               onChange={(e) => setStreet(e.target.value)}
               type="text"
-              className="sm:flex hidden w-full form-input text-xs py-3"
+              className="sm:flex hidden w-full form-input text-base py-3"
               placeholder="Street"
             />
             <input
               value={city}
               onChange={(e) => setCity(e.target.value)}
               type="text"
-              className="form-input w-full text-xs py-3"
+              className="form-input w-full text-base py-3"
               placeholder="City"
             />
             <input
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
               type="text"
-              className="form-input w-full text-xs py-3"
+              className="form-input w-full text-base py-3"
               placeholder="Postal Code"
             />
             <input
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               type="text"
-              className="sm:flex hidden w-full form-input text-xs py-3"
+              className="sm:flex hidden w-full form-input text-base py-3"
               placeholder="Country"
             />
           </div>
@@ -228,7 +226,7 @@ const BillingSection = ({ user }) => {
             value={country}
             onChange={(e) => setCountry(e.target.value)}
             type="text"
-            className="sm:hidden flex mt-3 w-full form-input text-xs py-3"
+            className="sm:hidden flex mt-3 w-full form-input text-base py-3"
             placeholder="Country"
           />
         </div>
@@ -241,28 +239,28 @@ const BillingSection = ({ user }) => {
               value={bankSortCode}
               onChange={(e) => setBankSortCode(e.target.value)}
               type="text"
-              className="form-input sm:w-full w-[48%] text-xs py-3"
+              className="form-input sm:w-full w-[48%] text-base py-3"
               placeholder="Sort Code"
             />
             <input
               value={bankAccountNumber}
               onChange={(e) => setBankAccountNumber(e.target.value)}
               type="text"
-              className="form-input sm:w-full w-[48%] text-xs py-3"
+              className="form-input sm:w-full w-[48%] text-base py-3"
               placeholder="Account Number"
             />
             <input
               value={bankName}
               onChange={(e) => setBankName(e.target.value)}
               type="text"
-              className="form-input sm:w-full w-[48%] text-xs py-3"
+              className="form-input sm:w-full w-[48%] text-base py-3"
               placeholder="Bank Name"
             />
             <input
               value={bankBranch}
               onChange={(e) => setBankBranch(e.target.value)}
               type="text"
-              className="form-input sm:w-full w-[48%] text-xs py-3"
+              className="form-input sm:w-full w-[48%] text-base py-3"
               placeholder="Bank Branch"
             />
           </div>
@@ -273,23 +271,22 @@ const BillingSection = ({ user }) => {
           <p className="text-gray-400">Trading Details</p>
           <div className="flex sm:flex-row flex-col mt-3 gap-6">
             <div className="flex flex-row gap-4">
-              <LightCheckbox
-                isChecked={soleTrader}
-                setChecked={setSoleTrader}
-                text={<p className="text-sm text-primaryBlue">Sole Trader</p>}
-              />
-              <LightCheckbox
-                isChecked={limited}
-                setChecked={setLimited}
-                text={<p className="text-sm text-primaryBlue">Limited</p>}
-              />
+              <div className="flex items-center">
+                <CheckboxTeal checked={soleTrader} setChecked={setSoleTrader} />
+                <p className="text-sm text-primaryBlue ml-2">Sole Trader</p>
+              </div>
+
+              <div className="flex items-center">
+                <CheckboxTeal checked={limited} setChecked={setLimited} />
+                <p className="text-sm text-primaryBlue ml-2">Limited</p>
+              </div>
             </div>
 
             <input
               value={NIC}
               onChange={(e) => setNIC(e.target.value)}
               type="text"
-              className="sm:ml-3 ml-0 w-full form-input text-xs py-3"
+              className="sm:ml-3 ml-0 w-full form-input text-base py-3"
               placeholder="NIC Number"
             />
 
@@ -301,26 +298,7 @@ const BillingSection = ({ user }) => {
                 {!updating ? (
                   "Update"
                 ) : (
-                  <svg
-                    className="h-5 w-5 animate-spin text-white text-center"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <LoadingSpinner width={5} height={5} color="white" />
                 )}
               </button>
             </div>

@@ -56,6 +56,7 @@ const UpdateEquipments_Card = ({ drones, setDrones }) => {
         if (error) throw error;
 
         if (data) setModels(data);
+
         setModelsLoding(false);
       } catch (err) {
         setModelsLoding(false);
@@ -76,12 +77,12 @@ const UpdateEquipments_Card = ({ drones, setDrones }) => {
 
   // Add Drone to list
   const addToDrones = () => {
-    if (selectedBrand && selectedModel)
+    if (selectedBrand?.name && selectedModel)
       setDrones([
         ...drones,
         {
           id: selectedModel.id,
-          brand: selectedBrand.name,
+          brand: { name: selectedBrand.name },
           model: selectedModel.model,
         },
       ]);

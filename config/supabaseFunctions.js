@@ -1,5 +1,6 @@
 import supabase from "./supabaseClient";
 import customerClient from "./customerClient";
+import { EncryptPassword } from "../utils/passwordSecure";
 
 export const insertToUsers = async (formData) => {
   let { data, error } = await supabase.from("Employees").insert(formData);
@@ -74,6 +75,15 @@ export const updateAuthEmail = async (emailToUpdate) => {
   const { data, error } = await supabase.auth.updateUser({
     email: emailToUpdate,
   });
+
+  // if (!error) {
+  //   const res = await supabase
+  //     .from("Employees")
+  //     .update({ email: emailToUpdate })
+  //     .eq("email", data.user.email);
+
+  //   console.log(res);
+  // }
 
   return { data, error };
 };
@@ -156,6 +166,19 @@ export const updateProfilePicture = async (file, userId) => {
       .from("Employees")
       .update({ profilePic: res.data.path })
       .eq("id", userId);
+  }
+
+  return res;
+};
+
+export const updateUserPassword = async (newPassword, email) => {
+  const res = await supabase.auth.updateUser({ password: newPassword });
+
+  if (!res.error) {
+    await supabase
+      .from("Employees")
+      .update({ password: EncryptPassword(newPassword) })
+      .eq("email", email);
   }
 
   return res;

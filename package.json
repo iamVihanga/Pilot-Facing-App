@@ -27,6 +27,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.2",
     "react-hook-form": "^7.36.1",
+    "react-hot-toast": "^2.4.0",
     "react-redux": "^8.0.4",
     "turf-area": "^3.0.12",
     "tw-elements": "^1.0.0-alpha12"

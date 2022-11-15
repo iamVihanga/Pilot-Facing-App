@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LightCheckbox } from "../";
+import { CheckboxTeal } from "../";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import UpdateSkills_Card from "./UpdateSkills_Card";
 import UpdateEquipments_Card from "./UpdateEquipments_Card";
@@ -58,6 +58,10 @@ const ProfileSettings = ({ data, user }) => {
       // ------------------------------------------------------------------------
 
       // Step 02 - remove file, if confirm without proof check mark
+      if (confirmNoProof) {
+        proofDoc_link = null;
+        confirmNoProof_val = true;
+      }
 
       // ------------------------------------------------------------------------
       // Step 03 - compare previous state of insurance file, upload if file selected
@@ -124,7 +128,7 @@ const ProfileSettings = ({ data, user }) => {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   type="text"
-                  className="sm:w-32 w-full mt-2 form-input px-3 py-3 text-xs"
+                  className="sm:w-32 w-full mt-2 form-input px-3 py-3 text-base"
                   placeholder="Jaime"
                 />
               </div>
@@ -134,7 +138,7 @@ const ProfileSettings = ({ data, user }) => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   type="text"
-                  className="sm:w-32 w-full mt-2 form-input px-3 py-3 text-xs"
+                  className="sm:w-32 w-full mt-2 form-input px-3 py-3 text-base"
                   placeholder="Harris"
                 />
               </div>
@@ -146,7 +150,7 @@ const ProfileSettings = ({ data, user }) => {
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   type="text"
-                  className="mt-2 form-input px-3 py-3 w-52 text-xs"
+                  className="mt-2 form-input px-3 py-3 w-52 text-base"
                   placeholder="07840774043"
                 />
               </div>
@@ -157,7 +161,7 @@ const ProfileSettings = ({ data, user }) => {
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
                 type="text"
-                className="mt-2 form-input px-3 py-3 sm:w-52 w-full text-xs"
+                className="mt-2 form-input px-3 py-3 sm:w-52 w-full text-base"
                 placeholder="07840774043"
               />
             </div>
@@ -172,14 +176,14 @@ const ProfileSettings = ({ data, user }) => {
                   value={flyerID}
                   onChange={(e) => setFlyerID(e.target.value)}
                   type="text"
-                  className="form-input sm:w-auto w-full px-3 py-3 text-xs"
+                  className="form-input sm:w-auto w-full px-3 py-3 text-base"
                   placeholder="Flyer ID"
                 />
                 <input
                   value={operatorID}
                   onChange={(e) => setOperatorID(e.target.value)}
                   type="text"
-                  className="form-input sm:w-auto w-full px-3 py-3 text-xs"
+                  className="form-input sm:w-auto w-full px-3 py-3 text-base"
                   placeholder="Operator ID"
                 />
               </div>
@@ -207,18 +211,16 @@ const ProfileSettings = ({ data, user }) => {
 
                 <p className="text-primaryBlue">OR</p>
 
-                <LightCheckbox
-                  text={
-                    <div className="">
-                      <p className="text-[0.65rem] text-green-500 word-wrap">
-                        I can confirm my drone(s) are under 250g and will not
-                        operate a drone that is 250g or over.
-                      </p>
-                    </div>
-                  }
-                  isChecked={confirmNoProof}
-                  setChecked={setConfirmNoProof}
-                />
+                <div className="flex items-center">
+                  <CheckboxTeal
+                    checked={confirmNoProof}
+                    setChecked={setConfirmNoProof}
+                  />
+                  <p className="text-[10px] ml-2 text-teal-500">
+                    I can confirm my drone(s) are under 250g and will not
+                    operate a drone that is 250g or over.
+                  </p>
+                </div>
               </div>
 
               {/* Drone insurance  */}
