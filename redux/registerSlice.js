@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  active_form: 2,
-  form1_state: "",
-  form2_state: "active",
+  active_form: 1,
+  form1_state: "active",
+  form2_state: "",
   form3_state: "",
 
   // Contact form
