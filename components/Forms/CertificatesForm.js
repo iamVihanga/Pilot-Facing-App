@@ -9,6 +9,7 @@ import {
   switchUpdateMode,
 } from "../../redux/registerSlice";
 import { useRouter } from "next/router";
+import { XCircleIcon } from "@heroicons/react/24/solid";
 
 const CertificatesForm = () => {
   const state = useSelector((state) => state.register);
@@ -166,29 +167,47 @@ const CertificatesForm = () => {
       {/* Row 2 */}
       <p className="mt-9 sm:text-base text-sm">Qualification &amp; Insurance</p>
       <div className="mt-5 flex sm:flex-row flex-col items-center justify-between">
-        <label className={`w-full cursor-pointer`}>
-          <Input
-            refItem={proofFile_Ref}
-            className={`${
-              proofFile !== null && "bg-teal-100 text-teal-500"
-            } cursor-pointer h-12 sm:text-sm text-[16px]`}
-            htmlFor="file1"
-          >
-            {`Upload "A2 CofC" or GVC Proof`}
-            <input
-              type="file"
-              id="file1"
-              className="hidden"
-              onChange={(e) => setProofFile(e.target.files[0])}
+        <div className="w-full relative">
+          <label className={`cursor-pointer`}>
+            <Input
+              refItem={proofFile_Ref}
+              className={`${confirm && "cursor-not-allowed"} ${
+                proofFile !== null && "bg-teal-100 text-teal-500"
+              } cursor-pointer h-12 sm:text-sm text-[16px]`}
+              htmlFor={"file1"}
+            >
+              <div className="flex items-center justify-between">
+                {proofFile !== null
+                  ? proofFile?.name
+                  : `Upload "A2 CofC" or GVC Proof`}
+                <input
+                  type="file"
+                  id="file1"
+                  className="hidden"
+                  onChange={(e) => {
+                    setProofFile(e.target.files[0]);
+                  }}
+                  disabled={confirm}
+                />
+              </div>
+            </Input>
+          </label>
+
+          {proofFile !== null && (
+            <XCircleIcon
+              className="w-5 h-5 text-teal-500 cursor-pointer absolute top-4 right-3"
+              onClick={() => setProofFile(null)}
             />
-          </Input>
-        </label>
+          )}
+        </div>
+
         <div className="mx-4 text-primaryBlue sm:my-0 my-3">OR</div>
         <div className="flex items-center">
           <CheckboxTeal
             checked={confirm}
             setChecked={setConfirm}
             className="mr-3"
+            isDisabled={proofFile !== null ? true : false}
           />
           <p className="text-xs text-green-400">
             {`I can confirm my drone(s) are under 250g and will not operate a drone that is 250g or over.`}
@@ -205,7 +224,7 @@ const CertificatesForm = () => {
             } cursor-pointer h-12 sm:text-sm text-[16px]`}
             htmlFor="file2"
           >
-            Drone Insurance Uploaded
+            {insurance !== null ? insurance?.name : "Upload Drone Insurance"}
             <input
               type="file"
               id="file2"
