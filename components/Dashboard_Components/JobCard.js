@@ -45,29 +45,32 @@ const JobCard = ({ data }) => {
       className={`job-card ${state == data.JobID && "active"}`}
       onClick={handleOnClick}
     >
-      <HomeModernIcon
-        strokeWidth={0.7}
-        className="h-12 max-w-12 text-primaryBlue"
-      />
-      <div>
-        <p className="text-sm font-semibold text-black">{jobcard_title}</p>
-        <div className="flex flex-row gap-6 items-center">
-          <div className="">
-            <p
-              title={data.address}
-              className="mt-2 sm:text-sm text-xs font-normal text-gray-400"
-            >
-              {data?.address.slice(0, 22)}..
+      <div className="flex items-center">
+        <HomeModernIcon
+          strokeWidth={0.7}
+          className="h-12 max-w-12 text-primaryBlue"
+        />
+        <div className="ml-5">
+          <p className="text-sm font-semibold text-black">{jobcard_title}</p>
+          <div className="flex flex-row gap-6 items-center">
+            <div className="">
+              <p
+                title={data.address}
+                className="mt-2 sm:text-sm text-xs font-normal text-gray-400"
+              >
+                {data?.address.slice(0, 22)}..
+              </p>
+            </div>
+            <p className="mt-2 lg:block hidden text-sm font-normal text-gray-400">
+              {new Date(data?.date).toDateString()}
+            </p>
+            <p className="mt-2 lg:block hidden text-sm font-semibold text-black">
+              {data?.area}m<sup>2</sup>
             </p>
           </div>
-          <p className="mt-2 lg:block hidden text-sm font-normal text-gray-400">
-            {new Date(data?.date).toDateString()}
-          </p>
-          <p className="mt-2 lg:block hidden text-sm font-semibold text-black">
-            {data?.area}m<sup>2</sup>
-          </p>
         </div>
       </div>
+
       <div className="">
         <p className="block sm:hidden text-center mb-5 text-sm font-semibold text-black">
           {data?.area}m<sup>2</sup>
