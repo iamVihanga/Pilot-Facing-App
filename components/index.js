@@ -1,6 +1,7 @@
 export { default as AuthLayout } from "./AuthLayout";
 export { default as RegisterFormArea } from "./Auth_Components/RegisterFormArea";
 export { default as RegisterFormNav } from "./Auth_Components/RegisterFormNav";
+export { default as ConfirmRegister } from "./Auth_Components/ConfirmRegister";
 export { default as ContactForm } from "./Forms/ContactForm";
 export { default as CertificatesForm } from "./Forms/CertificatesForm";
 export { default as EquipmentsForm } from "./Forms/EquipmentForm";

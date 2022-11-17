@@ -17,17 +17,13 @@ export const updateUser = async (formData, email) => {
   return { error };
 };
 
-export const uploadProofFile = async (file) => {
+export const uploadProofFile = async (file, username) => {
   let { data, error } = await supabase.storage
-    .from("user-data")
-    .upload(
-      `proofAndCertificates/${new Date().toISOString()}-${file.name}`,
-      file,
-      {
-        cacheControl: "3600",
-        upsert: false,
-      }
-    );
+    .from("proof-files")
+    .upload(`${username}/${file.name}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
 
   return { data, error };
 };

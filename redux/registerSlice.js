@@ -20,6 +20,8 @@ const initialState = {
   proofDoc: null,
   confirmNoProof: false,
   droneInsurance: null,
+  proofFileName: null,
+  insuranceFileName: null,
 
   // Equipment form
   skills: [],
@@ -78,6 +80,14 @@ const registerSlice = createSlice({
     switchForm: (state, action) => {
       state.active_form = action.payload;
     },
+
+    setProofFileName: (state, action) => {
+      state.proofFileName = action.payload;
+    },
+
+    setInsuranceFileName: (state, action) => {
+      state.insuranceFileName = action.payload;
+    },
   },
 });
 
@@ -90,6 +100,8 @@ export const {
   setUpdateMode,
   switchUpdateMode,
   switchForm,
+  setProofFileName,
+  setInsuranceFileName,
 } = registerSlice.actions;
 
 export default registerSlice.reducer;

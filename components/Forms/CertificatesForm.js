@@ -1,26 +1,28 @@
 import React, { useState, useRef } from "react";
 import { Input, CheckboxTeal, Button, ErrorMessage } from "../";
 import { useSelector, useDispatch } from "react-redux";
-import { uploadProofFile } from "../../config/supabaseFunctions";
 import {
   submitCertificateForm,
   completeForm,
   setActiveForm,
   switchUpdateMode,
+  setProofFileName,
+  setInsuranceFileName,
 } from "../../redux/registerSlice";
-import { useRouter } from "next/router";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 
-const CertificatesForm = () => {
+const CertificatesForm = ({
+  proofDoc,
+  insuranceDoc,
+  setProofDoc,
+  setInsuranceDoc,
+}) => {
   const state = useSelector((state) => state.register);
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const [flyerID, setFlyerID] = useState(state.flyerID);
   const [operatorID, setOperatorID] = useState(state.operatorID);
   const [confirm, setConfirm] = useState(state.confirmNoProof);
-  const [proofFile, setProofFile] = useState(state.proofDoc);
-  const [insurance, setInsurance] = useState(state.droneInsurance);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -55,7 +57,7 @@ const CertificatesForm = () => {
       operatorID_Ref.current.classList.remove("border-red-500");
     }
 
-    if (proofFile === null && !confirm) {
+    if (proofDoc === null && !confirm) {
       setError("Proof file is required !");
       proofFile_Ref.current.classList.add("border");
       proofFile_Ref.current.classList.add("border-red-500");
@@ -65,7 +67,7 @@ const CertificatesForm = () => {
       proofFile_Ref.current.classList.remove("border-red-500");
     }
 
-    if (insurance === null) {
+    if (insuranceDoc === null) {
       setError("Drone insurance is required !");
       insurance_Ref.current.classList.add("border");
       insurance_Ref.current.classList.add("border-red-500");
@@ -86,28 +88,10 @@ const CertificatesForm = () => {
 
       setLoading(true);
 
-      // Upload proof doc
-      let baseURL = process.env.NEXT_SUPABASE_STORAGE_BASEURL;
-
-      let proofFileDoc = null;
-      if (!confirm) {
-        const { data, error: proofFileErr } = await uploadProofFile(proofFile);
-        if (proofFileErr) throw new Error("Proof file upload failed.!");
-        proofFileDoc = `${baseURL}/user-data/${data.path}`;
-      }
-
-      const { data: insuranceDoc, error: insuranceErr } = await uploadProofFile(
-        insurance
-      );
-      if (insuranceErr) throw new Error("Drone Insurance upload failed.!");
-      // --------------------------------
-
       dispatch(
         submitCertificateForm({
           flyerID,
           operatorID,
-          proofDoc: proofFileDoc,
-          droneInsurance: `${baseURL}/user-data/${insuranceDoc.path}`,
           confirmNoProof: confirm,
         })
       );
@@ -118,7 +102,7 @@ const CertificatesForm = () => {
         state.form2_updateMode &&
         state.form3_updateMode
       )
-        return router.push("/auth/register/confirm");
+        return dispatch(setActiveForm(4));
 
       dispatch(setActiveForm(3));
 
@@ -172,31 +156,33 @@ const CertificatesForm = () => {
             <Input
               refItem={proofFile_Ref}
               className={`${confirm && "cursor-not-allowed"} ${
-                proofFile !== null && "bg-teal-100 text-teal-500"
+                proofDoc !== null && "bg-teal-100 text-teal-500"
               } cursor-pointer h-12 sm:text-sm text-[16px]`}
               htmlFor={"file1"}
             >
               <div className="flex items-center justify-between">
-                {proofFile !== null
-                  ? proofFile?.name
-                  : `Upload "A2 CofC" or GVC Proof`}
+                <p
+                  className={`${
+                    proofDoc === null ? "text-primaryBlue" : "text-teal-500"
+                  }`}
+                >
+                  {proofDoc?.name || `Upload "A2 CofC" or GVC Proof`}
+                </p>
                 <input
                   type="file"
                   id="file1"
                   className="hidden"
-                  onChange={(e) => {
-                    setProofFile(e.target.files[0]);
-                  }}
+                  onChange={(e) => setProofDoc(e.target.files[0])}
                   disabled={confirm}
                 />
               </div>
             </Input>
           </label>
 
-          {proofFile !== null && (
+          {proofDoc !== null && (
             <XCircleIcon
               className="w-5 h-5 text-teal-500 cursor-pointer absolute top-4 right-3"
-              onClick={() => setProofFile(null)}
+              onClick={() => setProofDoc(null)}
             />
           )}
         </div>
@@ -207,7 +193,7 @@ const CertificatesForm = () => {
             checked={confirm}
             setChecked={setConfirm}
             className="mr-3"
-            isDisabled={proofFile !== null ? true : false}
+            isDisabled={proofDoc !== null ? true : false}
           />
           <p className="text-xs text-green-400">
             {`I can confirm my drone(s) are under 250g and will not operate a drone that is 250g or over.`}
@@ -216,23 +202,38 @@ const CertificatesForm = () => {
       </div>
 
       <div className="mt-5 w-full">
-        <label className={`w-full cursor-pointer`}>
-          <Input
-            refItem={insurance_Ref}
-            className={`${
-              insurance !== null && "bg-teal-100 text-teal-500"
-            } cursor-pointer h-12 sm:text-sm text-[16px]`}
-            htmlFor="file2"
-          >
-            {insurance !== null ? insurance?.name : "Upload Drone Insurance"}
-            <input
-              type="file"
-              id="file2"
-              className="hidden"
-              onChange={(e) => setInsurance(e.target.files[0])}
+        <div className="w-full relative">
+          <label className={`cursor-pointer`}>
+            <Input
+              refItem={insurance_Ref}
+              className={`${
+                insuranceDoc !== null && "bg-teal-100 text-teal-500"
+              } cursor-pointer h-12 sm:text-sm text-[16px]`}
+              htmlFor="file2"
+            >
+              <p
+                className={`${
+                  insuranceDoc === null ? "text-primaryBlue" : "text-teal-500"
+                }`}
+              >
+                {insuranceDoc?.name || "Upload Drone Insurance"}
+              </p>
+              <input
+                type="file"
+                id="file2"
+                className="hidden"
+                onChange={(e) => setInsuranceDoc(e.target.files[0])}
+              />
+            </Input>
+          </label>
+
+          {insuranceDoc !== null && (
+            <XCircleIcon
+              className="w-5 h-5 text-teal-500 cursor-pointer absolute top-4 right-3"
+              onClick={() => setInsuranceDoc(null)}
             />
-          </Input>
-        </label>
+          )}
+        </div>
       </div>
 
       <Button onClick={handleNext} className="mt-9" isLoading={loading}>
