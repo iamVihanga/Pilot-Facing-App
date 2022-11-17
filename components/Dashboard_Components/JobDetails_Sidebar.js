@@ -87,39 +87,44 @@ const JobDetails_Sidebar = () => {
             {activeJob.address}
           </p>
 
-          <p className=" text-black mt-5 font-semibold text-xl break-words">
+          <p className=" text-black mt-5 font-semibold text-lg break-words">
             Customers Notes:
           </p>
-          <p className=" text-black mt-2 font-normal text-sm break-words">
+          <p className=" text-black mt-2 font-normal text-base break-words">
             {activeJob.customerNote}
           </p>
 
-          <p className=" text-black mt-5 font-normal text-xl break-words">
+          <p className=" text-black mt-5 font-normal text-lg break-words">
             <span className="font-semibold">Start Date:</span>{" "}
             {new Date(activeJob.date).toDateString()}
           </p>
 
-          <p className=" text-black mt-6 font-semibold text-xl break-words">
-            Customers Details:
-          </p>
-          <div className={`${activeJob.status === "Available" && "blur-sm"}`}>
-            <p className="text-black mt-3 font-normal text-base">
-              <span className="font-semibold">Name: </span>
-              {activeJob.customerID.firstName} {activeJob.customerID.lastName}
-            </p>
-            <p className="text-black mt-3 font-normal text-base">
-              <span className="font-semibold">Email Address: </span>
-              {activeJob.customerID.email}
-            </p>
-            <p className="text-black mt-3 font-normal text-base">
-              <span className="font-semibold">Phone Number: </span>
-              {activeJob.customerID.phoneNumber}
-            </p>
-            <p className="text-black mt-3 font-normal text-base">
-              <span className="font-semibold">Company: </span>
-              {activeJob.customerID.companyName}
-            </p>
-          </div>
+          {activeJob.status !== "Available" && (
+            <div>
+              <p className=" text-black mt-6 font-semibold text-xl break-words">
+                Customers Details:
+              </p>
+              <div>
+                <p className="text-black mt-3 font-normal text-base">
+                  <span className="font-semibold">Name: </span>
+                  {activeJob.customerID.firstName}{" "}
+                  {activeJob.customerID.lastName}
+                </p>
+                <p className="text-black mt-3 font-normal text-base">
+                  <span className="font-semibold">Email Address: </span>
+                  {activeJob.customerID.email}
+                </p>
+                <p className="text-black mt-3 font-normal text-base">
+                  <span className="font-semibold">Phone Number: </span>
+                  {activeJob.customerID.phoneNumber}
+                </p>
+                <p className="text-black mt-3 font-normal text-base">
+                  <span className="font-semibold">Company: </span>
+                  {activeJob.customerID.companyName}
+                </p>
+              </div>
+            </div>
+          )}
 
           {activeJob.status === "Available" ? (
             <div className="mt-16 mb-7">
