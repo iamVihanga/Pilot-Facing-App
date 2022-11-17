@@ -2,7 +2,7 @@ import React from "react";
 
 const FullScreen_Loading = () => {
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
+    <div className="w-screen h-screen bg-white flex items-center justify-center">
       <svg
         className="h-12 w-12 animate-spin text-teal-400 text-center"
         xmlns="http://www.w3.org/2000/svg"

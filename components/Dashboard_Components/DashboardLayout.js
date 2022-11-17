@@ -140,7 +140,7 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
             (router.pathname === "/dashboard" ||
               router.pathname === "/dashboard/myJobs") &&
             "lg:mr-[370px] mr-0"
-          } min-h-screen w-full bg-[#F7F9FA] flex-1`}
+          } min-h-full w-full bg-[#F7F9FA] flex-1`}
         >
           {children}
         </div>

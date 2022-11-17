@@ -76,14 +76,15 @@ const JobListLayout = ({ data }) => {
   // -----------------------------------
 
   return (
-    <div className="w-full  flex flex-row h-full">
+    <div className="w-full flex flex-row h-full">
       {/* Job List Area */}
-
       <div className="flex-1 mx-4 py-7">
         {/* Head */}
         <div className=" flex flex-row w-full justify-between items-center">
           <div className="flex flex-row gap-3 items-center">
-            <p className="text-black font-bold">Available Jobs</p>
+            <p className="text-black font-bold">
+              {isHome && "Available Jobs"} {isMyJobs && "My Jobs"}
+            </p>
             <div className="sm:block hidden">
               {isMyJobs && (
                 <DropdownSelector
@@ -137,7 +138,7 @@ const JobListLayout = ({ data }) => {
 
         {/* Area */}
         {showJobList && (
-          <div className="mt-4 bg-white rounded-lg w-full sm:p-5 p-3 flex flex-col gap-6">
+          <div className="my-4 bg-white rounded-lg w-full h-full mb-5 sm:p-5 p-3 flex flex-col gap-6">
             {/* Available List for Homepage */}
             {isHome &&
               availableList.length !== 0 &&
@@ -155,7 +156,7 @@ const JobListLayout = ({ data }) => {
         )}
 
         {isHome && (
-          <div className="mt-4 grid grid-cols-2 h-36 gap-4">
+          <div className="mb-4 grid grid-cols-2 h-36  gap-4">
             <div className="rounded-md w-full h-full bg-white flex flex-col items-center justify-center">
               <p className="sm:text-sm text-xs text-gray-400">
                 Total Live Jobs
@@ -182,7 +183,7 @@ const JobListLayout = ({ data }) => {
         )}
 
         {!showJobList && (
-          <div className="w-full h-full bg-white rounded-md mt-4 flex items-center justify-center">
+          <div className="w-full h-full bg-white rounded-md mb-4 flex items-center justify-center">
             <p className="font-semibold text-gray-300">
               {isHome && "Available"} {isMyJobs && "Your"} jobs show here
             </p>
