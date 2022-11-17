@@ -224,7 +224,7 @@ const SinglePage = () => {
                   {new Date(currentJob.date).toDateString()}
                 </p>
 
-                <div className="flex justify-center flex-col">
+                <div className="flex justify-start flex-col items-start">
                   <h2 className="text-black sm:text-lg text-base font-semibold">
                     Customer Notes:
                   </h2>
