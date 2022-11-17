@@ -37,6 +37,12 @@ export const getUserByEmail = async (email) => {
   return { data, error };
 };
 
+export const logoutUser = async () => {
+  let { error } = await supabase.auth.signOut();
+
+  return { error };
+};
+
 export const getDrones = async () => {
   let { data, error } = await supabase.from("DroneEquipment").select(`
             id,
