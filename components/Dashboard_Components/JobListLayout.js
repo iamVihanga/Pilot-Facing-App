@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -13,12 +13,15 @@ const JobListLayout = ({ data }) => {
   const currentUser = useSelector((state) => state.currentUser.currentUser);
   const isHome = router.pathname === "/dashboard";
   const isMyJobs = router.pathname === "/dashboard/myJobs";
+  const jobListAreaRef = useRef();
 
   const [myJobsList_glob, setMyJobsList__glob] = useState([]); // this used as a constant array for filtering
   const [myJobsList, setMyJobsList] = useState([]);
   const [availableList, setAvailableList] = useState([]);
   const [liveCount, setLiveCount] = useState(0);
   const [complteCount, setCompleteCount] = useState(0);
+
+  const [showJobList, setShowJobList] = useState(true);
 
   // Filtering for My Jobs section
   const filterItems = [
@@ -61,6 +64,14 @@ const JobListLayout = ({ data }) => {
 
     setLiveCount(myLiveJobsList.length);
     setCompleteCount(myCompleteJobsList.length);
+
+    // ------------------------------------------------------------
+    if (isHome) {
+      if (availableList_data.length === 0) setShowJobList(false);
+    }
+    if (isMyJobs) {
+      if (myJobsList_data.length === 0) setShowJobList(false);
+    }
   }, [currentUser]);
   // -----------------------------------
 
@@ -125,19 +136,23 @@ const JobListLayout = ({ data }) => {
         </div>
 
         {/* Area */}
-        <div className="mt-4 bg-white rounded-lg w-full sm:p-5 p-3 flex flex-col gap-6">
-          {/* Available List for Homepage */}
-          {isHome &&
-            availableList.length !== 0 &&
-            availableList.map((item) => (
-              <JobCard data={item} key={item.JobID} />
-            ))}
+        {showJobList && (
+          <div className="mt-4 bg-white rounded-lg w-full sm:p-5 p-3 flex flex-col gap-6">
+            {/* Available List for Homepage */}
+            {isHome &&
+              availableList.length !== 0 &&
+              availableList.map((item) => (
+                <JobCard data={item} key={item.JobID} />
+              ))}
 
-          {/* My Jobs list for /myJobs page */}
-          {isMyJobs &&
-            myJobsList.length !== 0 &&
-            myJobsList.map((item) => <JobCard data={item} key={item.JobID} />)}
-        </div>
+            {/* My Jobs list for /myJobs page */}
+            {isMyJobs &&
+              myJobsList.length !== 0 &&
+              myJobsList.map((item) => (
+                <JobCard data={item} key={item.JobID} />
+              ))}
+          </div>
+        )}
 
         {isHome && (
           <div className="mt-4 grid grid-cols-2 h-36 gap-4">
@@ -163,6 +178,14 @@ const JobListLayout = ({ data }) => {
                 Completed
               </div>
             </div>
+          </div>
+        )}
+
+        {!showJobList && (
+          <div className="w-full h-full bg-white rounded-md mt-4 flex items-center justify-center">
+            <p className="font-semibold text-gray-300">
+              {isHome && "Available"} {isMyJobs && "Your"} jobs show here
+            </p>
           </div>
         )}
       </div>
