@@ -233,38 +233,44 @@ const SinglePage = () => {
                   </h2>
                 </div>
 
-                <div className="flex justify-center flex-col">
-                  <h2 className="text-black sm:text-lg text-base font-semibold">
-                    Customer Details:
-                  </h2>
-                  <p className="text-black mt-1 font-normal sm:text-base text-sm">
-                    <span className="font-semibold">Name: </span>
-                    {currentJob.customerID.firstName}{" "}
-                    {currentJob.customerID.lastName}
-                  </p>
-                  <p className="text-black mt-1 font-normal sm:text-base text-sm">
-                    <span className="font-semibold">Email Address: </span>
-                    {currentJob.customerID.email}
-                  </p>
-                  <p className="text-black mt-1 font-normal sm:text-base text-sm">
-                    <span className="font-semibold">Phone Number: </span>
-                    {currentJob.customerID.phoneNumber}
-                  </p>
-                  <p className="text-black mt-1 font-normal sm:text-base text-sm">
-                    <span className="font-semibold">Company: </span>
-                    {currentJob.customerID.companyName}
-                  </p>
-                </div>
+                {currentJob.status !== "Completed" && (
+                  <div className="flex justify-center flex-col">
+                    <h2 className="text-black sm:text-lg text-base font-semibold">
+                      Customer Details:
+                    </h2>
+                    <p className="text-black mt-1 font-normal sm:text-base text-sm">
+                      <span className="font-semibold">Name: </span>
+                      {currentJob.customerID.firstName}{" "}
+                      {currentJob.customerID.lastName}
+                    </p>
+                    <p className="text-black mt-1 font-normal sm:text-base text-sm">
+                      <span className="font-semibold">Email Address: </span>
+                      {currentJob.customerID.email}
+                    </p>
+                    <p className="text-black mt-1 font-normal sm:text-base text-sm">
+                      <span className="font-semibold">Phone Number: </span>
+                      {currentJob.customerID.phoneNumber}
+                    </p>
+                    <p className="text-black mt-1 font-normal sm:text-base text-sm">
+                      <span className="font-semibold">Company: </span>
+                      {currentJob.customerID.companyName}
+                    </p>
+                  </div>
+                )}
 
                 <h2 className="text-black sm:text-lg text-sm font-semibold">
-                  <span className="sm:hidden inline-flex">
-                    Arrival Time {currentJob.arrivalTime}
-                  </span>
+                  {currentJob.status !== "Completed" && (
+                    <span className="sm:hidden inline-flex">
+                      Arrival Time {currentJob.arrivalTime}
+                    </span>
+                  )}
                   {currentJob.status === "Live" && <p>Upload Deliverables</p>}
                 </h2>
-                <h2 className="sm:block hidden text-gray-600  font-semibold text-2xl">
-                  Arrival Time {currentJob.arrivalTime}
-                </h2>
+                {currentJob.status !== "Completed" && (
+                  <h2 className="sm:block hidden text-gray-600  font-semibold text-2xl">
+                    Arrival Time {currentJob.arrivalTime}
+                  </h2>
+                )}
               </div>
 
               {/* File Upload */}
