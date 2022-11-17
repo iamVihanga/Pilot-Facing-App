@@ -190,12 +190,12 @@ const ProfileSettings = ({ data, user }) => {
 
               {/* Proof Doc Upload */}
               <div className="mt-4 flex max-w-fit sm:flex-row flex-col items-center justify-between w-full h-12 gap-x-2 sm:gap-y-0 gap-y-2">
-                <div className="whitespace-nowrap sm:w-auto w-full">
+                <div className="sm:w-auto min-w-[200px]">
                   <label
                     htmlFor="file1"
                     className={`form-input ${
                       proofDoc && "success"
-                    } sm:w-auto w-full text-xs flex flex-row flex-1 items-center justify-start h-12 cursor-pointer`}
+                    } sm:w-auto w-full text-small flex flex-row flex-1 items-center justify-start h-12 cursor-pointer`}
                   >
                     {proofDoc
                       ? '"A2 CofC" or GVC Proof Uploaded'
@@ -211,7 +211,7 @@ const ProfileSettings = ({ data, user }) => {
 
                 <p className="text-primaryBlue">OR</p>
 
-                <div className="flex items-center">
+                <div className="flex items-center w-full">
                   <CheckboxTeal
                     checked={confirmNoProof}
                     setChecked={setConfirmNoProof}
