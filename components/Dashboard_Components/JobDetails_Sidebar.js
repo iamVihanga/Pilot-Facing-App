@@ -78,7 +78,7 @@ const JobDetails_Sidebar = () => {
             />
           </div>
 
-          <p className="mt-5 text-black font-semibold text-2xl">
+          <p className="mt-5 text-black font-semibold text-xl">
             {activeJob.pilotExpertize}{" "}
             <span className="text-gray-300 font-normal">#{activeJob.id}</span>
           </p>
