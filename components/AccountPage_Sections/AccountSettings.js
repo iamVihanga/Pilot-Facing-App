@@ -5,12 +5,16 @@ import {
   updateUserPassword,
 } from "../../config/supabaseFunctions";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { DecryptPassword } from "../../utils/passwordSecure";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { ShowPasswordEye, LoadingSpinner } from "../../components";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../../redux/currentUser";
 
 const AccountSettings = ({ user }) => {
+  const dispatch = useDispatch();
   const [emailToUpdate, setEmailToUpdate] = useState(
     user?.new_email || user?.email || ""
   );
@@ -58,6 +62,7 @@ const AccountSettings = ({ user }) => {
 
         const pictureUrl = `${process.env.NEXT_SUPABASE_STORAGE_BASEURL}/profile-pics/${data.path}`;
         setProfilePic(pictureUrl);
+        dispatch(setCurrentUser({ ...user, profilePic: data.path }));
         // ***
         // -------------------------------
         setUploadingProfilePic(false);
@@ -142,7 +147,7 @@ const AccountSettings = ({ user }) => {
             {dpOverlay && (
               <div
                 onClick={handleProfilePicureChange}
-                className="w-full h-full absolute bg-[#000000a6] rounded-md flex flex-col items-center justify-center"
+                className="w-full h-full absolute z-[1000] bg-[#000000a6] rounded-md flex flex-col items-center justify-center"
               >
                 {!uploadingProfilePic ? (
                   <>
@@ -158,10 +163,12 @@ const AccountSettings = ({ user }) => {
               </div>
             )}
 
-            <img
+            <Image
               src={user.profilePic ? profilePic : "/assets/avatar.jpg"}
               alt=""
               className="rounded-md bg-center"
+              layout="fill"
+              placeholder="empty"
             />
           </div>
         </div>

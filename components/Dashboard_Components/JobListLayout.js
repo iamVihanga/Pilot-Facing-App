@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -6,14 +6,17 @@ import JobCard from "./JobCard";
 import DropdownSelector from "./DropdownSelector";
 import { useSelector, useDispatch } from "react-redux";
 import { setActiveJob } from "../../redux/activeJobSlice";
+import { setCurrentUser } from "../../redux/currentUser";
+import { useUser } from "@supabase/auth-helpers-react";
+import { getUserByEmail } from "../../config/supabaseFunctions";
 
 const JobListLayout = ({ data }) => {
   const router = useRouter();
+  const user = useUser();
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.currentUser.currentUser);
   const isHome = router.pathname === "/dashboard";
   const isMyJobs = router.pathname === "/dashboard/myJobs";
-  const jobListAreaRef = useRef();
 
   const [myJobsList_glob, setMyJobsList__glob] = useState([]); // this used as a constant array for filtering
   const [myJobsList, setMyJobsList] = useState([]);
@@ -22,6 +25,7 @@ const JobListLayout = ({ data }) => {
   const [complteCount, setCompleteCount] = useState(0);
 
   const [showJobList, setShowJobList] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Filtering for My Jobs section
   const filterItems = [
@@ -30,6 +34,9 @@ const JobListLayout = ({ data }) => {
     { id: 3, label: "Completed" },
   ];
   const [activeFilter, setActiveFilter] = useState(filterItems[0]);
+
+  // Handle data initialization
+  useEffect(() => {}, []);
 
   // Handle filter select
   useEffect(() => {
@@ -43,7 +50,7 @@ const JobListLayout = ({ data }) => {
     }
   }, [activeFilter]);
 
-  // handle sort out dataset
+  // Handle sort out dataset
   useEffect(() => {
     let myLiveJobsList = [];
     let myCompleteJobsList = [];
@@ -67,13 +74,37 @@ const JobListLayout = ({ data }) => {
 
     // ------------------------------------------------------------
     if (isHome) {
-      if (availableList_data.length === 0) setShowJobList(false);
+      if (availableList_data.length === 0) {
+        setShowJobList(false);
+      } else setShowJobList(true);
     }
     if (isMyJobs) {
-      if (myJobsList_data.length === 0) setShowJobList(false);
+      if (myJobsList_data.length === 0) {
+        setShowJobList(false);
+      } else setShowJobList(true);
     }
   }, [currentUser]);
-  // -----------------------------------
+
+  // Handle user initialize
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await getUserByEmail(user.email);
+        if (error) return;
+
+        dispatch(setCurrentUser(data[0]));
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+      }
+    };
+
+    if (Object.keys(currentUser).length === 0 && user !== null) {
+      initializeUser();
+    }
+  }, [user]);
 
   return (
     <div className="w-full flex flex-row h-full">
@@ -138,7 +169,7 @@ const JobListLayout = ({ data }) => {
 
         {/* Area */}
         {showJobList && (
-          <div className="my-4 bg-white rounded-lg w-full min-h-[70vh] mb-5 sm:p-5 p-3 flex flex-col gap-6">
+          <div className="my-4 bg-white rounded-lg w-full h-[70vh] mb-5 sm:p-5 p-3 flex flex-col gap-6">
             {/* Available List for Homepage */}
             {isHome &&
               availableList.length !== 0 &&
@@ -183,7 +214,7 @@ const JobListLayout = ({ data }) => {
         )}
 
         {!showJobList && (
-          <div className="w-full h-full bg-white rounded-md mb-4 flex items-center justify-center">
+          <div className="w-full h-full bg-white rounded-md my-4 flex items-center justify-center">
             <p className="font-semibold text-gray-300">
               {isHome && "Available"} {isMyJobs && "Your"} jobs show here
             </p>
