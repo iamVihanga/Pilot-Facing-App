@@ -138,7 +138,7 @@ const JobListLayout = ({ data }) => {
 
         {/* Area */}
         {showJobList && (
-          <div className="my-4 bg-white rounded-lg w-full h-full mb-5 sm:p-5 p-3 flex flex-col gap-6">
+          <div className="my-4 bg-white rounded-lg w-full min-h-[70vh] mb-5 sm:p-5 p-3 flex flex-col gap-6">
             {/* Available List for Homepage */}
             {isHome &&
               availableList.length !== 0 &&
