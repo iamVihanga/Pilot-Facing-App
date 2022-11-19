@@ -12,6 +12,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { ShowPasswordEye, LoadingSpinner } from "../../components";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../../redux/currentUser";
+import { successToast, errorToast } from "../UI/Toast";
 
 const AccountSettings = ({ user }) => {
   const dispatch = useDispatch();
@@ -33,11 +34,18 @@ const AccountSettings = ({ user }) => {
 
   // ----------------------------------------------------------------
   const handleUpdateAuthEmail = async () => {
-    setUpdatingEmail(true);
+    try {
+      setUpdatingEmail(true);
 
-    const { data, error } = await updateAuthEmail(emailToUpdate);
+      const { data, error } = await updateAuthEmail(emailToUpdate);
+      if (error) throw new Error("Email update failed !");
 
-    setUpdatingEmail(false);
+      setUpdatingEmail(false);
+      successToast("Email Updated !");
+    } catch (err) {
+      setUpdatingEmail(false);
+      errorToast(`Error: ${err.message}`);
+    }
   };
 
   const handleProfilePicureChange = () => {
@@ -64,11 +72,13 @@ const AccountSettings = ({ user }) => {
         setProfilePic(pictureUrl);
         dispatch(setCurrentUser({ ...user, profilePic: data.path }));
         // ***
+        successToast("Profile Picture Updated !");
         // -------------------------------
         setUploadingProfilePic(false);
         setDpOverlay(false);
       } catch (err) {
         console.log(err);
+        errorToast("Error: Profile Picture Update Failed !");
         setUploadingProfilePic(false);
         setDpOverlay(false);
       }
@@ -82,8 +92,10 @@ const AccountSettings = ({ user }) => {
 
       console.log(res);
       setUpdatingPassword(false);
+      successToast("Password Updated !");
     } catch (err) {
       setUpdatingPassword(false);
+      errorToast("Error: Password update failed !");
     }
   };
   // ----------------------------------------------------------------

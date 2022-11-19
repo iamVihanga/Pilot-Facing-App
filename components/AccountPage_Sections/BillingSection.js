@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckboxTeal, LoadingSpinner } from "../";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import { successToast, errorToast } from "../UI/Toast";
 
 const BillingSection = ({ user }) => {
   const { supabaseClient } = useSessionContext();
@@ -138,10 +139,12 @@ const BillingSection = ({ user }) => {
         }
       }
       setUpdating(false);
+      successToast("User Billing Updated !");
     } catch (err) {
       console.log(err);
       setUpdating(false);
       setError(err);
+      errorToast("Error: User Billing Update Failed");
     }
   };
 

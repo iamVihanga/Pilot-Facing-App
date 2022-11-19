@@ -5,12 +5,9 @@ import {
   Mobile_SidebarHeader,
   FullScreenLoading,
 } from "../../../components";
+import { errorToast, successToast } from "../../../components/UI/Toast";
 import { useRouter } from "next/router";
-import {
-  ArrowRightIcon,
-  XMarkIcon,
-  CheckIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import formatBytes from "../../../utils/formatBytes";
 import { useDropzone } from "react-dropzone";
@@ -18,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { setActiveJob } from "../../../redux/activeJobSlice";
 import { getSingleJob, completeJob } from "../../../config/supabaseFunctions";
 import axios from "axios";
+import { Toaster } from "react-hot-toast";
 
 const SinglePage = () => {
   const {
@@ -69,6 +67,11 @@ const SinglePage = () => {
     }
   }, [acceptedFiles]);
 
+  // Show toast
+  useEffect(() => {
+    if (!loading && showNotification) successToast(notificationText);
+  }, [loading]);
+
   // Drop zone files
   const files = uploadedFiles.map((file) => (
     <li key={file.path}>
@@ -108,34 +111,20 @@ const SinglePage = () => {
       });
 
       setNotificationText(data.message);
-      setShowNotification(true);
       setUploading(null);
-
-      fetchActiveJob();
+      fetchActiveJob().then(() => successToast(data.message));
     } catch (err) {
       setError(err.message);
       setUploading(null);
+
+      errorToast(`Error: ${err.message}`);
     }
   };
 
   return (
     <>
       {/* --------------Notification-------------- */}
-      {!loading && showNotification && (
-        <div className="fixed z-40 sm:right-4 sm:top-6 top-28 right-2 py-3 px-4 bg-teal-200 rounded-md flex items-center justify-between shadow-lg shadow-emerald-200 border border-teal-300">
-          <div className="mr-8 flex items-center">
-            <div className="w-8 h-8 rounded-md bg-teal-300 flex items-center justify-center mr-3">
-              <CheckIcon className="w-5 h-5 text-teal-500" strokeWidth={3} />
-            </div>
-
-            <p className="text-teal-600">{notificationText}</p>
-          </div>
-          <XMarkIcon
-            onClick={() => setShowNotification(false)}
-            className="cursor-pointer w-5 h-5 text-teal-600"
-          />
-        </div>
-      )}
+      <Toaster position="top-right" />
       {/* ----------------------------------------- */}
 
       {loading && <FullScreenLoading />}

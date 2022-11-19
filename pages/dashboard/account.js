@@ -10,6 +10,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { getUserByEmail, logoutUser } from "../../config/supabaseFunctions";
 import { setCurrentUser } from "../../redux/currentUser";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { Toaster } from "react-hot-toast";
 
 // Sections
 import AccountSettings from "../../components/AccountPage_Sections/AccountSettings";
@@ -59,6 +60,8 @@ const Account = () => {
         />
       }
     >
+      <Toaster position="top-right" />
+
       {loading && (
         <div className="w-full h-full flex items-center justify-center">
           <LoadingSpinner width={6} height={6} color="primaryTeal" />

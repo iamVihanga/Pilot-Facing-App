@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CheckboxTeal } from "../";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import UpdateSkills_Card from "./UpdateSkills_Card";
 import UpdateEquipments_Card from "./UpdateEquipments_Card";
 import { uploadProofFile, updateUser } from "../../config/supabaseFunctions";
-import { useRouter } from "next/router";
+import { successToast, errorToast } from "../UI/Toast";
 
 const ProfileSettings = ({ data, user }) => {
-  const { supabaseClient } = useSessionContext();
-  const router = useRouter();
   // ------------- Element States ----------------
   const [loading, setLoading] = useState(false);
   const [firstName, setFirstName] = useState(user.firstName);
@@ -100,9 +97,11 @@ const ProfileSettings = ({ data, user }) => {
       if (error) throw error;
 
       setUpdating(false);
+      successToast("Profile Updated !");
     } catch (err) {
       setUpdateError(err.message);
       setUpdating(false);
+      errorToast("Error: Profile Update Failed");
     }
   };
 
