@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { ClockIcon } from "@heroicons/react/24/outline";
-import formatAMPM from "../../utils/formatTime";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useRouter } from "next/router";
 
 const AcceptJob_DetailsBar = ({ jobID }) => {
   const router = useRouter();
-  const [dayStr, setDayStr] = useState(null);
   const [arrivalTime, setArrivalTime] = useState(null);
   const currentUser = useSelector((state) => state.currentUser.currentUser);
   const serverBaseUrl =
@@ -52,27 +47,23 @@ const AcceptJob_DetailsBar = ({ jobID }) => {
   };
 
   return (
-    <div>
-      <div className=" bg-primaryBlueLight rounded-md flex items-center px-3">
-        <DatePicker
-          selected={dayStr}
-          onChange={(date) => {
-            setDayStr(date);
-            setArrivalTime(formatAMPM(date));
-          }}
-          showTimeSelect
-          showTimeSelectOnly
-          timeIntervals={15}
-          timeCaption="Select Arrival Time"
-          dateFormat="h:mm aa"
-          placeholderText="Select Arrival Time"
-          className=" text-primaryBlue py-2 w-full font-[400] bg-transparent outline-none cursor-pointer placeholder:text-primaryBlue"
-        />
-        <ClockIcon className="w-5 h-5 text-primaryBlue" strokeWidth={2} />
+    <div className="mt-7">
+      <div className="grid grid-cols-3 grid-rows-3 gap-x-5 gap-y-5">
+        {arrivalTimesList.map((time) => (
+          <button
+            key={time.id}
+            onClick={() => setArrivalTime(time.text)}
+            className={`${
+              arrivalTime === time.text ? "bg-primaryTeal" : "bg-primaryBlue"
+            } outline-none text-white h-12 rounded-md text-sm`}
+          >
+            {time.text}
+          </button>
+        ))}
       </div>
 
       <button
-        className={`mt-3 ${
+        className={`mt-5 ${
           arrivalTime
             ? "bg-primaryTeal cursor-pointer"
             : "bg-gray-400 cursor-not-allowed"
@@ -113,3 +104,15 @@ const AcceptJob_DetailsBar = ({ jobID }) => {
 };
 
 export default AcceptJob_DetailsBar;
+
+const arrivalTimesList = [
+  { id: 1, text: "8:00am" },
+  { id: 2, text: "9:00am" },
+  { id: 3, text: "10:00am" },
+  { id: 4, text: "11:00am" },
+  { id: 5, text: "12:00pm" },
+  { id: 6, text: "1:00pm" },
+  { id: 7, text: "2:00pm" },
+  { id: 8, text: "3:00pm" },
+  { id: 9, text: "4:00pm" },
+];

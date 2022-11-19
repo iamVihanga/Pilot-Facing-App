@@ -190,7 +190,7 @@ const ProfileSettings = ({ data, user }) => {
 
               {/* Proof Doc Upload */}
               <div className="mt-4 flex max-w-fit sm:flex-row flex-col items-center justify-between w-full h-12 gap-x-2 sm:gap-y-0 gap-y-2">
-                <div className="sm:w-auto min-w-[200px]">
+                <div className="sm:w-min-w-[200px] w-full">
                   <label
                     htmlFor="file1"
                     className={`form-input ${

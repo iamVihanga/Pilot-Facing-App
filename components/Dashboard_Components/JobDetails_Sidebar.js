@@ -127,7 +127,7 @@ const JobDetails_Sidebar = () => {
           )}
 
           {activeJob.status === "Available" ? (
-            <div className="mt-16 mb-7">
+            <div className="mb-7">
               <AcceptJob_DetailsBar jobID={activeJob.id} />
             </div>
           ) : (
