@@ -60,7 +60,7 @@ const Login = () => {
   const sendPasswordResetLink = async () => {
     const { data, error } = await handlePasswordReset(
       emailToPassword,
-      "http://localhost:3000/auth/forgot-password"
+      "https://pilotdev.duber.uk/auth/forgot-password"
     );
 
     console.log(data);
