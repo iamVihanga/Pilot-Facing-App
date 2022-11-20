@@ -38,9 +38,7 @@ const ForgotPassword = () => {
           !accessToken ||
           typeof accessToken === "object"
         ) {
-          console.log("Invalid access token or type", {
-            id: notification,
-          });
+          console.log("Invalid access token or type");
           return;
         }
 
@@ -49,9 +47,7 @@ const ForgotPassword = () => {
         if (error) {
           console.log(error.message);
         } else if (!error) {
-          console.log("Password Changed", {
-            id: notification,
-          });
+          console.log("Password Changed");
         }
       }
     } catch (err) {
