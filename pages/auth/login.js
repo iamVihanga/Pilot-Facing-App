@@ -2,14 +2,21 @@ import React, { useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signinUser, getSession } from "../../config/supabaseFunctions";
+import {
+  signinUser,
+  getSession,
+  handlePasswordReset,
+} from "../../config/supabaseFunctions";
+import { LoadingSpinner } from "../../components";
 
 const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailToPassword, setEmailToPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [forgotPasswordView, setForgotPasswordView] = useState(false);
 
   // Redirect if auth
   useEffect(() => {
@@ -49,6 +56,18 @@ const Login = () => {
     handleSignIn();
   };
 
+  // Forgot password functions
+  const sendPasswordResetLink = async () => {
+    const { data, error } = await handlePasswordReset(
+      emailToPassword,
+      "http://localhost:3000/auth/forgot-password"
+    );
+
+    console.log(data);
+  };
+
+  // ---------------------------------------------
+
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 h-screen">
       <div className="hidden md:block lg:col-span-2">
@@ -56,82 +75,96 @@ const Login = () => {
       </div>
 
       <div className="flex items-center justify-center sm:px-12 px-8">
-        <form className="w-full">
-          {/* <h2 className='text-logoText font-light'><span className="font-bold">Onthefly</span> DronePilots</h2> */}
-          <img src="/assets/Duber logo.svg" className="w-32" />
-          <h2 className="mt-12 mb-5 text-xl text-black font-bold">
-            Nice to see you again
-          </h2>
+        {!forgotPasswordView ? (
+          <form className="w-full">
+            {/* <h2 className='text-logoText font-light'><span className="font-bold">Onthefly</span> DronePilots</h2> */}
+            <img src="/assets/Duber logo.svg" className="w-32" />
+            <h2 className="mt-12 mb-5 text-xl text-black font-bold">
+              Nice to see you again
+            </h2>
 
-          {error && <p className="mb-5 text-xs text-red-500">{error}</p>}
-          <InputItem
-            label={"Login"}
-            inputType="email"
-            id="email"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email or Phone number"
-            value={email}
-          />
-          <InputItem
-            label={"Password"}
-            inputType="password"
-            id="password"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            className="mt-5"
-            value={password}
-          />
+            {error && <p className="mb-5 text-xs text-red-500">{error}</p>}
+            <InputItem
+              label={"Login"}
+              inputType="email"
+              id="email"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email or Phone number"
+              value={email}
+            />
+            <InputItem
+              label={"Password"}
+              inputType="password"
+              id="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="mt-5"
+              value={password}
+            />
 
-          <div className="w-full flex items-center flex-nowrap justify-between mt-6 mb-8">
-            <ToggleButton />
+            <div className="w-full flex items-center flex-nowrap justify-between mt-6 mb-8">
+              <ToggleButton />
 
-            <Link href="/">
-              <a className="text-skyBlue text-xs font-semibold">
-                Forgot Password ?
-              </a>
-            </Link>
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            type="button"
-            className="w-full flex items-center justify-center bg-skyBlue py-3 rounded-md text-white font-semibold text-sm"
-          >
-            {!loading ? (
-              "Sign in"
-            ) : (
-              <svg
-                className="h-5 w-5 animate-spin text-white text-center"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+              <p
+                className="text-skyBlue text-xs font-semibold cursor-pointer"
+                onClick={() => setForgotPasswordView(true)}
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            )}
-          </button>
+                Forgot Password ?
+              </p>
+            </div>
 
-          <div className="border-t border-gray-200 my-9" />
+            <button
+              onClick={handleSubmit}
+              type="button"
+              className="w-full flex items-center justify-center bg-skyBlue py-3 rounded-md text-white font-semibold text-sm"
+            >
+              {!loading ? (
+                "Sign in"
+              ) : (
+                <LoadingSpinner width={5} height={5} color="white" />
+              )}
+            </button>
 
-          <p className="text-center text-xs">
-            Dont have an account?{" "}
-            <Link href="/auth/register">
-              <a className="text-skyBlue font-semibold">Sign up now</a>
-            </Link>
-          </p>
-        </form>
+            <div className="border-t border-gray-200 my-9" />
+
+            <p className="text-center text-xs">
+              Dont have an account?{" "}
+              <Link href="/auth/register">
+                <a className="text-skyBlue font-semibold">Sign up now</a>
+              </Link>
+            </p>
+          </form>
+        ) : (
+          <div className="w-full ">
+            <h2 className="mt-12 mb-5 text-xl text-black font-bold">
+              Forgot Password
+            </h2>
+            <InputItem
+              label={"Email"}
+              inputType="email"
+              className="mt-3"
+              id="email"
+              placeholder="Email Address"
+              value={emailToPassword}
+              onChange={(e) => setEmailToPassword(e.target.value)}
+              leftComponent={
+                <button
+                  className="text-sm bg-primaryBlue py-1 px-3 rounded-md text-white"
+                  onClick={sendPasswordResetLink}
+                >
+                  Send
+                </button>
+              }
+            />
+
+            <h2
+              className="text-xs"
+              onClick={() => setForgotPasswordView(false)}
+            >
+              Login
+            </h2>
+          </div>
+        )}
       </div>
     </div>
   );
