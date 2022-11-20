@@ -194,10 +194,10 @@ export const handlePasswordReset = async (email, redirectUrl) => {
   return res;
 };
 
-export const updateForgotPassword = async (password, accessToken) => {
-  const res = await supabase.auth.api.updateUser(accessToken, {
+export const updateForgotPassword = async (password) => {
+  const { user, error } = await supabase.auth.updateUser({
     password: password,
   });
 
-  return res;
+  return { user, error };
 };

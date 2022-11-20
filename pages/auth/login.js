@@ -8,6 +8,8 @@ import {
   handlePasswordReset,
 } from "../../config/supabaseFunctions";
 import { LoadingSpinner } from "../../components";
+import { Toaster } from "react-hot-toast";
+import { successToast, errorToast } from "../../components/UI/Toast";
 
 const Login = () => {
   const router = useRouter();
@@ -17,6 +19,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [forgotPasswordView, setForgotPasswordView] = useState(false);
+  const [sendingResetLink, setSendingResetLink] = useState(false);
 
   // Redirect if auth
   useEffect(() => {
@@ -58,18 +61,27 @@ const Login = () => {
 
   // Forgot password functions
   const sendPasswordResetLink = async () => {
-    const { data, error } = await handlePasswordReset(
-      emailToPassword,
-      "https://pilotdev.duber.uk/auth/forgot-password"
-    );
+    try {
+      setSendingResetLink(true);
 
-    console.log(data);
+      const { data, error } = await handlePasswordReset(
+        emailToPassword,
+        "https://pilotdev.duber.uk/auth/forgot-password"
+      );
+      if (error) throw new Error("Password Reset link send failed !");
+
+      setSendingResetLink(false);
+      successToast("Password reset link send !");
+    } catch (err) {
+      errorToast(err.message);
+    }
   };
 
   // ---------------------------------------------
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 h-screen">
+      <Toaster position="top-right" />
       <div className="hidden md:block lg:col-span-2">
         <img className="w-full h-full object-cover" src="/assets/loginBG.jpg" />
       </div>
@@ -147,22 +159,27 @@ const Login = () => {
               placeholder="Email Address"
               value={emailToPassword}
               onChange={(e) => setEmailToPassword(e.target.value)}
-              leftComponent={
-                <button
-                  className="text-sm bg-primaryBlue py-1 px-3 rounded-md text-white"
-                  onClick={sendPasswordResetLink}
-                >
-                  Send
-                </button>
-              }
             />
 
-            <h2
-              className="text-xs"
-              onClick={() => setForgotPasswordView(false)}
-            >
-              Login
-            </h2>
+            <div className="mt-4 flex items-center justify-between w-full">
+              <button
+                className="h-12 w-32 bg-primaryBlue flex items-center justify-center text-white rounded-md"
+                onClick={sendPasswordResetLink}
+              >
+                {sendingResetLink ? (
+                  <LoadingSpinner width={5} height={5} color="white" />
+                ) : (
+                  "Send Link"
+                )}
+              </button>
+
+              <h2
+                className="text-xs cursor-pointer text-gray-400 hover:text-primaryBlue"
+                onClick={() => setForgotPasswordView(false)}
+              >
+                Back to Login
+              </h2>
+            </div>
           </div>
         )}
       </div>
