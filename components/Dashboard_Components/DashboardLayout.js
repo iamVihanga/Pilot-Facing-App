@@ -8,6 +8,9 @@ import {
   BookmarkIcon,
   UserIcon,
   ArrowRightOnRectangleIcon,
+  UserGroupIcon,
+  ClipboardDocumentCheckIcon,
+  ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import { JobDetails_Sidebar } from "../";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +23,7 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
   const activeNav = router.pathname.slice(1);
   const accountPage = router.pathname === "/dashboard/account";
   const currentUser = useSelector((state) => state.currentUser.currentUser);
+  const isAdmin = useSelector((state) => state.currentUser.isAdmin);
 
   const current_profilePicUrl = `${process.env.NEXT_SUPABASE_STORAGE_BASEURL}/profile-pics/${currentUser?.profilePic}`;
 
@@ -52,7 +56,12 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
                 className="w-32 mb-5 cursor-pointer"
               />
             </Link>
+
+            {/* ======================================================== */}
+            {/* SIDE NAV BAR -> NAV LINKS */}
+            {/* ======================================================== */}
             <div className="mt-8 flex flex-col gap-3">
+              {/* Job Listing Link */}
               <Link href="/dashboard" legacyBehavior>
                 <a
                   onClick={() => dispatch(setActiveJob(null))}
@@ -64,6 +73,8 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
                   <p className="text-base font-semibold">Job Listings</p>
                 </a>
               </Link>
+
+              {/* My Jobs Link */}
               <Link href="/dashboard/myJobs" legacyBehavior>
                 <a
                   onClick={() => dispatch(setActiveJob(null))}
@@ -75,7 +86,55 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
                   <p className="text-base font-semibold">My Jobs</p>
                 </a>
               </Link>
+
+              {isAdmin && (
+                <>
+                  {/* Admin* - Drone Pilots Link */}
+                  <Link href={"/dashboard/admin/drone-pilots"} legacyBehavior>
+                    <a
+                      onClick={() => dispatch(setActiveJob(null))}
+                      className={`sidenav-item ${
+                        activeNav == "dashboard/admin/drone-pilots" && "active"
+                      }`}
+                    >
+                      <UserGroupIcon className="w-6 h-6" strokeWidth={2} />
+                      <p className="text-base font-semibold">Drone Pilots</p>
+                    </a>
+                  </Link>
+
+                  {/* Admin* - Applications Link */}
+                  <Link href={"/dashboard/admin/applications"} legacyBehavior>
+                    <a
+                      onClick={() => dispatch(setActiveJob(null))}
+                      className={`sidenav-item ${
+                        activeNav == "dashboard/admin/applications" && "active"
+                      }`}
+                    >
+                      <ClipboardDocumentCheckIcon
+                        className="w-6 h-6"
+                        strokeWidth={2}
+                      />
+                      <p className="text-base font-semibold">Applications</p>
+                    </a>
+                  </Link>
+
+                  {/* Admin* - All Orders Link */}
+                  <Link href={"/dashboard/admin/orders"} legacyBehavior>
+                    <a
+                      onClick={() => dispatch(setActiveJob(null))}
+                      className={`sidenav-item ${
+                        activeNav == "dashboard/admin/orders" && "active"
+                      }`}
+                    >
+                      <ShoppingCartIcon className="w-6 h-6" strokeWidth={2} />
+                      <p className="text-base font-semibold">Orders</p>
+                    </a>
+                  </Link>
+                </>
+              )}
             </div>
+            {/* ======================================================== */}
+            {/* ======================================================== */}
 
             <div className="w-full border-t border-1 border-gray-200 mt-6" />
             <Link href="#" className="mt-4">
@@ -125,7 +184,7 @@ const DashboardLayout = ({ children, className, headerComponent }) => {
                       accountPage ? "text-primaryBlue" : "text-gray-500"
                     }`}
                   >
-                    Drone Pilot
+                    {isAdmin ? "Admin" : "Drone Pilot"}
                   </p>
                 </div>
               </div>

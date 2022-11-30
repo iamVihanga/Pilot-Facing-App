@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useUser, useSessionContext } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "../../redux/currentUser";
+import { setCurrentUser, setIsAdmin } from "../../redux/currentUser";
 
 import {
   DashboardLayout,
@@ -38,6 +38,7 @@ export default function Home({ jobListing }) {
     };
 
     if (!isLoading && user) {
+      dispatch(setIsAdmin(user.user_metadata?.isAdmin));
       getUserData();
     }
   }, [isLoading]);

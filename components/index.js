@@ -25,3 +25,6 @@ export { default as Checkbox } from "./UI/Checkbox";
 export { default as TimePicker } from "./UI/TimePicker";
 export { default as ShowPasswordEye } from "./UI/ShowPasswordEye";
 export { default as LoadingSpinner } from "./UI/LoadingSpinner";
+
+// Admin Components
+export { default as AdminProvider } from "./Admin_Components/AdminProvider";
