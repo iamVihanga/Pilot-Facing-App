@@ -63,6 +63,9 @@
   .dropdown-menu-item {
     @apply p-1 px-2 mb-2 cursor-pointer hover:bg-gray-200 rounded-md transition-all ease-in-out duration-100;
   }
+  .status-button {
+    @apply w-32 cursor-default text-sm font-semibold py-2 rounded-md
+  }
 }
 
 @layer utilities {

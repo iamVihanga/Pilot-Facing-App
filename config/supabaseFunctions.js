@@ -1,6 +1,7 @@
 import supabase from "./supabaseClient";
 import customerClient from "./customerClient";
 import { EncryptPassword } from "../utils/passwordSecure";
+import axios from "axios";
 
 export const insertToUsers = async (formData) => {
   let { data, error } = await supabase.from("Employees").insert(formData);
@@ -200,4 +201,44 @@ export const updateForgotPassword = async (password) => {
   });
 
   return { user, error };
+};
+
+// =====================================================
+// ------------------ ADMIN FUNCTIONS ------------------
+// =====================================================
+export const getAllEmployees = async () => {
+  const res = await supabase.from("Employees").select();
+
+  return res;
+};
+
+export const declinePilot = async (id) => {
+  const res = await supabase
+    .from("Employees")
+    .update({
+      approved: false,
+      declined: true,
+    })
+    .eq("id", id);
+
+  return res;
+};
+
+export const acceptPilot = async (email) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_BASEURL}/admin/signup-pilot`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email }),
+    }
+  );
+
+  const data = await res.json();
+  console.log(data);
+
+  return data;
 };

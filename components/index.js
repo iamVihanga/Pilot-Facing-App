@@ -28,3 +28,5 @@ export { default as LoadingSpinner } from "./UI/LoadingSpinner";
 
 // Admin Components
 export { default as AdminProvider } from "./Admin_Components/AdminProvider";
+export { default as ApplicationCard } from "./Admin_Components/ApplicationCard";
+export { default as ApplicationSidebar } from "./Admin_Components/ApplicationSidebar";
