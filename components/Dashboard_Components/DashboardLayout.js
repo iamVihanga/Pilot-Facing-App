@@ -15,15 +15,39 @@ import {
 import { JobDetails_Sidebar } from "../";
 import { useSelector, useDispatch } from "react-redux";
 import { setActiveJob } from "../../redux/activeJobSlice";
+import { setCurrentUser, setIsAdmin } from "../../redux/currentUser";
 import supabaseClient from "../../config/supabaseClient";
+import { getUserByEmail } from "../../config/supabaseFunctions";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const DashboardLayout = ({ children, className, headerComponent }) => {
   const router = useRouter();
+  const session_user = useUser();
   const dispatch = useDispatch();
   const activeNav = router.pathname.slice(1);
   const accountPage = router.pathname === "/dashboard/account";
   const currentUser = useSelector((state) => state.currentUser.currentUser);
   const isAdmin = useSelector((state) => state.currentUser.isAdmin);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const { data, error } = await getUserByEmail(session_user.email);
+      if (error) return;
+
+      dispatch(setCurrentUser(data[0]));
+
+      dispatch(setIsAdmin(session_user.user_metadata?.isAdmin));
+    };
+
+    if (session_user && Object.keys(currentUser).length === 0) {
+      getUserData();
+    }
+  }, [session_user]);
+
+  useEffect(() => {
+    // if (Object.keys(currentUser).length === 0) {
+    // }
+  }, [currentUser]);
 
   const current_profilePicUrl = `${process.env.NEXT_SUPABASE_STORAGE_BASEURL}/profile-pics/${currentUser?.profilePic}`;
 
