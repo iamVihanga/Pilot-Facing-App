@@ -126,8 +126,8 @@ const searchFilter = (term, solidList) => {
 
   filteredList = solidList.filter(
     (item) =>
-      item.pilot.firstName.startsWith(term) ||
-      item.pilot.lastName.startsWith(term) ||
+      item.pilot.firstName.toUpperCase().startsWith(term.toUpperCase()) ||
+      item.pilot.lastName.toUpperCase().startsWith(term.toUpperCase()) ||
       item.pilot.id.toString().startsWith(term)
   );
 
