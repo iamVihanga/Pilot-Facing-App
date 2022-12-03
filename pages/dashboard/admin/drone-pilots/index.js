@@ -4,6 +4,7 @@ import {
   DashboardLayout,
   LoadingSpinner,
   DronePilotCard,
+  DronePilotsMap,
 } from "../../../../components";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -52,6 +53,7 @@ const Index = () => {
   // Handle click
   const handleOnClick = (pilot) => {
     setActivePilot(pilot);
+    console.log(pilot);
   };
 
   return (
@@ -108,7 +110,13 @@ const Index = () => {
                 </div>
 
                 {/* Map Component */}
-                <div className="flex-1/2 w-full bg-white"></div>
+                <div className="flex-1/2 w-full bg-white">
+                  <DronePilotsMap
+                    center={[-2.369669, 54.237933]}
+                    zoom={5.3}
+                    pilots={pilotData}
+                  />
+                </div>
               </div>
             </>
           )}

@@ -12,7 +12,6 @@ export { default as DashboardLayout } from "./Dashboard_Components/DashboardLayo
 export { default as JobListLayout } from "./Dashboard_Components/JobListLayout";
 export { default as JobDetails_Sidebar } from "./Dashboard_Components/JobDetails_Sidebar";
 export { default as DropdownSelector } from "./Dashboard_Components/DropdownSelector";
-export { default as MapComponent } from "./MapComponent";
 export { default as Mobile_AvailableJob } from "./Mobile_Components/Mobile_AvailableJob";
 export { default as Mobile_SidebarHeader } from "./Mobile_Components/Mobile_SidebarHeader";
 export { default as FullScreenLoading } from "./FullScreen_Loading";
@@ -25,6 +24,10 @@ export { default as Checkbox } from "./UI/Checkbox";
 export { default as TimePicker } from "./UI/TimePicker";
 export { default as ShowPasswordEye } from "./UI/ShowPasswordEye";
 export { default as LoadingSpinner } from "./UI/LoadingSpinner";
+
+// Map Components
+export { default as MapComponent } from "./UI/Map/MapComponent";
+export { default as DronePilotsMap } from "./UI/Map/DronePilotsMap";
 
 // Admin Components
 export { default as AdminProvider } from "./Admin_Components/AdminProvider";

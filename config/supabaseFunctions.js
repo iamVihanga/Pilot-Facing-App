@@ -285,3 +285,29 @@ export const allDronePilots = async () => {
     return { data: null, error };
   }
 };
+
+export const getEachPilotLocation = async (pilotLost) => {
+  let coordinateList = [];
+
+  await Promise.all(
+    pilotLost.map(async (pilot) => {
+      if (pilot.billing !== undefined) {
+        if (pilot.billing.street !== null) {
+          let address_text = `${pilot.billing.street}, ${pilot.billing.city}, ${pilot.billing.country}`;
+
+          const location_res = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${address_text}.json?access_token=${process.env.NEXT_MAPBOX_TOKEN}&country=gb`
+          );
+          const location_data = await location_res.json();
+
+          coordinateList.push({
+            pilot: `${pilot.pilot.firstName} ${pilot.pilot.lastName}`,
+            location: location_data?.features[0],
+          });
+        }
+      }
+    })
+  );
+
+  return coordinateList;
+};
