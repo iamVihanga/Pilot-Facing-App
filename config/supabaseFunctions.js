@@ -242,3 +242,46 @@ export const acceptPilot = async (email) => {
 
   return data;
 };
+
+export const allDronePilots = async () => {
+  try {
+    let dataSet = [];
+
+    // Get Pilot details
+    const { data: pilotDetails, error: pilotDetailsError } = await supabase
+      .from("Employees")
+      .select()
+      .eq("approved", true);
+    if (pilotDetailsError) throw new Error("Get all pilots fetching failed");
+
+    // Get each pilot billing details and order details
+    await Promise.all(
+      pilotDetails.map(async (pilot) => {
+        // Fetching billing address
+        const { data: billingData, error: billingDataError } = await supabase
+          .from("EmployeeBilling")
+          .select()
+          .eq("userId", pilot.id);
+
+        if (billingDataError) throw new Error("Get billing data error");
+
+        // Fetching Orders
+        const { data: jobsData, error: jobsError } = await supabase
+          .from("Jobs")
+          .select()
+          .eq("pilotID", pilot.id);
+
+        if (jobsError) throw new Error("Get jobs data error");
+
+        dataSet.push({ pilot, billing: billingData[0], jobs: jobsData });
+      })
+    );
+
+    return {
+      data: dataSet,
+      error: null,
+    };
+  } catch (error) {
+    return { data: null, error };
+  }
+};

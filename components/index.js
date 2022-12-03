@@ -30,3 +30,4 @@ export { default as LoadingSpinner } from "./UI/LoadingSpinner";
 export { default as AdminProvider } from "./Admin_Components/AdminProvider";
 export { default as ApplicationCard } from "./Admin_Components/ApplicationCard";
 export { default as ApplicationSidebar } from "./Admin_Components/ApplicationSidebar";
+export { default as DronePilotCard } from "./Admin_Components/DronePilotCard";
