@@ -7,8 +7,9 @@ import { LoadingSpinner } from "../../../components";
 import dynamic from "next/dynamic";
 // import Marker from "../../../components/UI/Map/Marker";
 
-const DynamicMarker = dynamic(() =>
-  import("../../../components/UI/Map/Marker")
+const DynamicMarker = dynamic(
+  () => import("../../../components/UI/Map/Marker"),
+  { ssr: false }
 );
 
 const DronePilotsMap = ({ center, zoom, pilots }) => {
