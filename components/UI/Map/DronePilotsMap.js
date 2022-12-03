@@ -4,7 +4,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { mapTheme, mapStyles } from "./mapStyles";
 import { getEachPilotLocation } from "../../../config/supabaseFunctions";
 import { LoadingSpinner } from "../../../components";
-import Marker from "../../../components/UI/Map/Marker";
+import dynamic from "next/dynamic";
+// import Marker from "../../../components/UI/Map/Marker";
+
+const DynamicMarker = dynamic(() =>
+  import("../../../components/UI/Map/Marker")
+);
 
 const DronePilotsMap = ({ center, zoom, pilots }) => {
   const [mapStyle, setMapStyle] = useState(mapTheme[0]);
@@ -55,7 +60,7 @@ const DronePilotsMap = ({ center, zoom, pilots }) => {
   useEffect(() => {
     if (pilotLocations.length !== 0) {
       pilotLocations.map((item) => {
-        new mapboxgl.Marker(Marker)
+        new mapboxgl.Marker()
           .setLngLat(item.location.center)
           .addTo(map.current);
       });
