@@ -35,7 +35,7 @@ const ColumnOneForm = ({ data: { pilotData, billingData } }) => {
         </Input>
       </div>
 
-      <p className="mt-8 text-sm mb-2">CAA Information &amp; Certificates</p>
+      <p className="mt-8 text-sm mb-2">{`CAA Information & Certificates`}</p>
       <div className="flex items-center gap-x-3">
         <Input className={"w-full"}>
           <p className="text-primaryBlue">{pilotData.flyerID}</p>
@@ -53,10 +53,10 @@ const ColumnOneForm = ({ data: { pilotData, billingData } }) => {
               className="text-primaryBlue hover:underline"
               href={pilotData.proofDoc}
             >
-              Download "A2 CofC" or GVC
+              {`Download "A2 CofC" or GVC`}
             </a>
           ) : (
-            <p className="text-primaryBlue">"A2 CofC" or GVC not Uploaded</p>
+            <p className="text-primaryBlue">{`"A2 CofC" or GVC not Uploaded`}</p>
           )}
         </Input>
 
