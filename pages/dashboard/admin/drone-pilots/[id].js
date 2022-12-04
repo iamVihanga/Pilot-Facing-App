@@ -26,7 +26,6 @@ const SinglePilot = () => {
         const { data, error } = await singlePilotData_admin(router.query?.id);
         if (error) throw error;
 
-        console.log(data);
         setData(data);
         setLoading(false);
       } catch (err) {
@@ -74,7 +73,7 @@ const SinglePilot = () => {
                 <ColumnTwoForm data={data} />
               </div>
 
-              <p className="mt-6 mb-2">Home/Office Address</p>
+              <p className="mt-6 mb-2">{`Home/Office Address`}</p>
               <div className="flex items-center gap-x-3">
                 <Input>
                   <p></p>
