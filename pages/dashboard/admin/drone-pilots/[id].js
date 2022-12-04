@@ -10,7 +10,7 @@ import ColumnTwoForm from "../../../../components/Admin_Components/SinglePage/Co
 import { useRouter } from "next/router";
 import { singlePilotData_admin } from "../../../../config/supabaseFunctions";
 import Link from "next/link";
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 const SinglePilot = () => {
   const [loading, setLoading] = useState(false);
