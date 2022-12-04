@@ -311,3 +311,39 @@ export const getEachPilotLocation = async (pilotLost) => {
 
   return coordinateList;
 };
+
+export const singlePilotData_admin = async (pilot_id) => {
+  try {
+    let dataSet = {
+      pilotData: {},
+      billingData: {},
+    };
+
+    // Get Pilot details
+    const { data: pilotDetails, error: pilotDetailsError } = await supabase
+      .from("Employees")
+      .select()
+      .eq("id", pilot_id);
+    if (pilotDetailsError) throw new Error("Get pilot fetching failed");
+
+    // get pilot billing data
+    const { data: pilotBilling, error: pilotBillingError } = await supabase
+      .from("EmployeeBilling")
+      .select()
+      .eq("userId", pilot_id);
+    if (pilotBillingError) throw new Error("Get pilot billing data failed");
+
+    dataSet.pilotData = pilotDetails[0];
+    dataSet.billingData = pilotBilling[0];
+
+    return {
+      data: dataSet,
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: null,
+      error: err,
+    };
+  }
+};
