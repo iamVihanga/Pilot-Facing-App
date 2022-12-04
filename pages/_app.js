@@ -27,10 +27,6 @@ function MyApp({ Component, pageProps }) {
             name="viewport"
             content="width=device-width, initial-scale=1"
           ></meta>
-          <meta
-            http-equiv="Content-Security-Policy"
-            content="upgrade-insecure-requests"
-          ></meta>
         </Head>
         <Component {...pageProps} />
       </Provider>
